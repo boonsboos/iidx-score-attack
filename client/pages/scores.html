@@ -11,7 +11,6 @@
       integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
       crossorigin="anonymous"
     />
-    <link href="https://cdn.jsdelivr.net/gh/tofsjonas/sortable@latest/dist/sortable.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="/static/v.css" />  
   </head>
   <body>
@@ -41,9 +40,7 @@
             <th>DJ Name</th>
             <th>Rating</th>
             {{ range .BracketCharts }}
-            <th
-              id="{{ .TitleLatinized }}-{{ .ChartLevel }}"
-            >
+            <th id="{{ .TitleLatinized }}-{{ .ChartLevel }}">
               <abbr title="{{ .TitleLatinized }}">
                 <div {{ if eq .ChartType "boss" }} class="text-warning" {{end}}>
                   {{ .Title }}

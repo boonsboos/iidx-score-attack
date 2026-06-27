@@ -4,6 +4,19 @@ abbr[title] {
   text-decoration: none !important;
 }
 
+/* replace sortable.js ::after styling without their custom colors so we can still rely on bootstrap for our styling.
+adapted from https://github.com/tofsjonas/sortable/blob/4a3be13ba78c3c85510dc2012fdeb35c206d4cd3/src/scss/sortable-base.scss, licensed under UNLICENSE*/
+
+.sortable thead th[aria-sort="descending"]::after {
+  padding-left: 0.5rem;
+  content: "▼";
+}
+
+.sortable thead th[aria-sort="ascending"]::after {
+  padding-left: 0.5rem;
+  content: "▲";
+}
+
 /* lamp styling */
 
 .lamp-0 {
