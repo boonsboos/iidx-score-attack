@@ -5,7 +5,7 @@ website to facilitate iidx score attack events
 ## progress
 
 - Backend MVP (Load scores automagically) [==========]
-- Frontend MVP (Show scores in the bracket) [__________]
+- Frontend MVP (Show scores in the bracket) [========__] (need to implement sorting)
 - Show past chart pools [__________]
 - Show past bracket scores [_________]
 
