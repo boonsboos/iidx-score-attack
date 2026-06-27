@@ -12,28 +12,48 @@ import (
 	"iidx.boonsboos.nl/server/models"
 )
 
-func Scores(context *gin.Context) {
+func ScoresLower(context *gin.Context) {
+	lowerBracketCharts, err := GetBracketCharts("lower")
+	if err != nil {
+		log.Println("Error occurred while fetching lower bracket charts: ", err)
+	}
 
-	// get all players that have played at least one chart in the current upper/lower chart pool.
-	// get all scores for each player in the current upper/lower chart pool.
-	// calculate the score rating and bp rating for each of their scores in the current upper/lower chart pool.
-	// total these up in a weighted average based on the number of players that have played each chart in the current upper/lower chart pool.
+	lowerBracket := GetBracketScores(lowerBracketCharts)
+
+	// ensure players with higher average rating are sorted for first
+	sort.Slice(lowerBracket, func(i, j int) bool {
+		return lowerBracket[i].Rating < lowerBracket[j].Rating
+	})
+
+	context.HTML(200, "scores.html", gin.H{
+		"BracketCharts": lo.Map(lowerBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
+			return models.ScorePageBracketChart{
+				Title:          chart.Chart.Song.Name,
+				TitleLatinized: chart.Chart.Song.NameLatinized,
+				ChartLevel:     "SP" + chart.Chart.Difficulty + strconv.Itoa(chart.Chart.Level),
+				ChartType:      chart.ChartType,
+			}
+		}),
+		"Bracket": lowerBracket,
+	})
+}
+
+func ScoresUpper(context *gin.Context) {
 
 	upperBracketCharts, err := GetBracketCharts("upper")
 	if err != nil {
 		log.Println("Error occurred while fetching upper bracket charts: ", err)
 	}
 
-	lowerBracketCharts, err := GetBracketCharts("lower")
-	if err != nil {
-		log.Println("Error occurred while fetching lower bracket charts: ", err)
-	}
-
 	upperBracket := GetBracketScores(upperBracketCharts)
-	lowerBracket := GetBracketScores(lowerBracketCharts)
+
+	// ensure players with higher average rating are sorted for first
+	sort.Slice(upperBracket, func(i, j int) bool {
+		return upperBracket[i].Rating < upperBracket[j].Rating
+	})
 
 	context.HTML(200, "scores.html", gin.H{
-		"UpperBracketCharts": lo.Map(upperBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
+		"BracketCharts": lo.Map(upperBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
 			return models.ScorePageBracketChart{
 				Title:          chart.Chart.Song.Name,
 				TitleLatinized: chart.Chart.Song.NameLatinized,
@@ -41,16 +61,7 @@ func Scores(context *gin.Context) {
 				ChartType:      chart.ChartType,
 			}
 		}),
-		"UpperBracket": upperBracket,
-		"LowerBracketCharts": lo.Map(lowerBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
-			return models.ScorePageBracketChart{
-				Title:          chart.Chart.Song.Name,
-				TitleLatinized: chart.Chart.Song.NameLatinized,
-				ChartLevel:     "SP" + chart.Chart.Difficulty + strconv.Itoa(chart.Chart.Level),
-				ChartType:      chart.ChartType,
-			}
-		}),
-		"LowerBracket": lowerBracket,
+		"Bracket": upperBracket,
 	})
 }
 
@@ -65,6 +76,11 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 	}
 
 	players, scores := GetBracketPlayersScores(charts)
+
+	if len(players) == 0 {
+		log.Println("No players have played yet in this bracket")
+		return []models.ScorePagePlayerScore{}
+	}
 
 	PlayerIds := lo.KeyBy(players, func(player models.Player) uint {
 		return player.ID

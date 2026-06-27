@@ -3,7 +3,7 @@
   <td>{{ .Player.DJName }}</td>
   <td>{{ .Rating }}</td>
   {{ range .Scores }}
-  <td>
+  <td data-sort="{{.ExScore}}">
     <abbr title="Laatst gespeeld: {{ .Timestamp }}">
       <div>{{ .ExScore }} EX</div>
       <div>{{ .ScoreRate }} | {{ .Misscount }} BP</div>

@@ -2,6 +2,8 @@
 
 website to facilitate iidx score attack events
 
+live instance: https://iidx.otoge.win
+
 ## progress
 
 - Backend MVP (Load scores automagically) [==========]

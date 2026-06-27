@@ -19,7 +19,10 @@ func RegisterRoutes(router *gin.Engine) {
 
 	router.GET("/", pages.Index)
 	router.GET("/success", pages.Success)
-	router.GET("/scores", pages.Scores)
+	router.GET("/scores", pages.BracketSelect)
+	router.GET("/scores/upper", pages.ScoresUpper)
+	router.GET("/scores/lower", pages.ScoresLower)
+	router.GET("/scores/bracket/:id", pages.BracketSelect)
 
 	router.POST("/oauth/callback", thirdparty.HandleOauthCallback)
 	router.GET("/oauth/callback", thirdparty.HandleOauthCallback)
