@@ -13,5 +13,5 @@ live instance: https://iidx.otoge.win
 
 ## frontend fixes to be done
 
+- Add version styling for everything post-copula
 - Turn IIDX RED, DJ TROOPERS, EMPRESS, SIRIUS, LINCLE, tricoro, SINOBUZ, CANNON BALLERS, Rootage, BISTROVER, CastHour, RESIDENT and EPOLIS version stylings into SVGs
-- Restyle the scores table headers
