@@ -1,0 +1,22 @@
+{{ define "score-row" }}
+<tr>
+  <td>{{ .Player.DJName }}</td>
+  <td>{{ .Rating }}</td>
+  {{ range .Scores }}
+  <td>
+    <abbr title="Laatst gespeeld: {{ .Timestamp }}">
+      <div>{{ .ExScore }} EX</div>
+      <div>{{ .ScoreRate }} | {{ .Misscount }} BP</div>
+      <div>
+        <span style="color: hsl({{ .Rating }}deg, 50%, 50%) !important;"
+          >{{ ratingFormat .Rating }}</span
+        >
+        rating
+      </div>
+
+      <div class="lamp-{{ .Lamp }}">{{ lampString .Lamp }}</div>
+    </abbr>
+  </td>
+  {{ end }}
+</tr>
+{{ end }}

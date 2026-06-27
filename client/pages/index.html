@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IIDX Score Aanval</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="/static/v.css" />
+  </head>
+  <body>
+    <div class="container gap-3 d-flex flex-column">
+      <div>
+        <a class="text-decoration-none text-light-emphasis" href="/">
+          <h1 class="display-2">IIDX Score Aanval</h1>
+        </a>
+        <p class="lead">Een beatmania IIDX highscore competitie.</p>
+      </div>
+
+      <div class="d-flex gap-3 justify-content-around flex-wrap">
+        <div class="card col-md-5">
+          <div class="card-body">
+            <h5 class="card-title">Meedoen</h5>
+            <p class="card-text">
+              Log in met je 🌸 account om mee te doen aan de score aanval. Je
+              scores worden elke 10 minuten bijgewerkt.
+            </p>
+            <a
+              href="https://kailua.projectflower.eu/oauth/authorize?client_id={{ .ClientId }}&response_type=code&redirect_uri={{ .RedirectURI }}&scope=settings_read"
+              class="btn btn-primary"
+              >🌸 Meedoen</a
+            >
+          </div>
+        </div>
+
+        <div class="card col-md-5">
+          <div class="card-body">
+            <h5 class="card-title">Scores</h5>
+            <p class="card-text">
+              Bekijk de scores van alle deelnemers aan de score aanval. Je kunt
+              hier ook vorige brackets bekijken. (WIP)
+            </p>
+            <a href="/scores" class="btn btn-primary">Naar scores</a>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+      <main role="main">
+        <h2> {{ .PoolName }} charts</h2>
+
+        <p>Bracket is actief vanaf {{ .StartTime }} tot {{ .EndTime }}</p>
+
+        <div>
+          <h3>Lower bracket</h3>
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Titel</th>
+                <th>Artiest</th>
+                <th>Chart</th>
+                <th>Versie</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ range .LowerBracketCharts }} {{ template "chart-row" . }} {{
+              end }}
+            </tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3>Upper bracket</h3>
+          <table class="table table-striped table-hover">
+            <thead>
+              <tr>
+                <th>Titel</th>
+                <th>Artiest</th>
+                <th>Chart</th>
+                <th>Versie</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{ range .UpperBracketCharts }} {{ template "chart-row" . }} {{
+              end }}
+            </tbody>
+          </table>
+        </div>
+      </main>
+
+      <hr />
+      <h2>Uitleg</h2>
+      <section>
+        <h3 class="text-decoration-underline">> Hoe werkt het?</h3>
+        <p>
+          Elke maand worden er twee brackets van 6 charts geselecteerd voor de
+          score aanval. De lower bracket is voor minder ervaren spelers, tot en
+          met 6th dan. De upper bracket is voor meer ervaren spelers, 7th dan en
+          hoger.
+        </p>
+        <p>
+          Elke bracket heeft 5 normale charts en 1 boss chart. De boss chart is
+          een extra uitdaging die 2x zoveel punten oplevert als een normale
+          chart. Deze is in <span class="text-warning fw-bold">dikgedrukt geel</span> 
+          aangegeven in de score tabel. De boss chart is optioneel, maar 
+          het is wel aan te raden om deze te spelen, omdat het je score aanzienlijk kan verhogen.
+        </p>
+        <p>
+          Je score wordt berekend aan de hand van je plaatsing tussen andere
+          spelers op dezelfde chart. De formule hiervoor is als volgt: 
+          
+        </p>
+        <p>
+          <code>rating = 100 * (1 - ((plaatsing - 1) / aantal spelers))</code>
+        </p>
+        <p>
+          100 punten is de maximale score die je kunt behalen op een chart.
+          0 punten is de minimale score die je kunt behalen op een chart 
+          (bijvoorbeeld als je geen enkele score hebt behaald). Hierna 
+          wordt het gewogen gemiddelde van de ratings van alle charts berekend,
+          met als weging het aantal spelers per chart.
+        </p>
+      </section>
+      <section>
+        <h3 class="text-decoration-underline">> Hoe lees ik wat voor level een chart is?</h3>
+        <p>
+          De schaal van moeilijkheid in IIDX gaat van 1 tot 12. IIDX heeft 5
+          verschillende difficulties brackets: Beginner, Normal, Hyper, Another
+          en Leggendaria.
+          Deze worden afgekort als <b>B</b>, <b>N</b>, <b>H</b>, <b>A</b> en <b>L</b> respectievelijk.
+          Ook zijn er twee verschillende play modes: Single (7key+1) en Double (14key+2). Deze worden afgekort als <b>SP</b> en <b>DP</b>
+          <br/><br/>
+          Laten we een voorbeeld nemen:
+
+          <ul>
+            <li>
+              <b>SPA10</b>. Dit staat dus voor Single Play Another level 10.
+            </li>
+            <li>
+              <b>DPN4</b>, wat staat voor Double Play Normal level 4.
+            </li>
+          </ul>
+        </p>
+    </div>
+
+    {{ template "footer" }}
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

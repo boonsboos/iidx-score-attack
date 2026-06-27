@@ -1,0 +1,11 @@
+{
+  "Port": 8080,
+  "OauthBaseUrl": "https://example.com/oauth/authorize",
+  "OauthRedirectUrl": "http://localhost:8080/oauth/callback",
+  "OauthClientId": "1234",
+  "OauthSecret": "1234",
+  "ApiBaseUrl": "https://example.com/api",
+  "ConnectionString": "root:password@tcp(localhost:3306)/dbname",
+  "AdminKey": "your_admin_key_here",
+  "WorkerInterval": 600
+}

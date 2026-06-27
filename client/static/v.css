@@ -1,0 +1,278 @@
+abbr[title] {
+  /* override bootstrap */
+  -webkit-text-decoration: none !important;
+  text-decoration: none !important;
+}
+
+/* lamp styling */
+
+.lamp-0 {
+  color: grey !important;
+}
+
+.lamp-1 {
+  color: indianred !important;
+}
+
+.lamp-2 {
+  color: orchid !important;
+  font-weight: bold;
+}
+
+.lamp-3 {
+  color: forestgreen !important;
+  font-weight: bold;
+}
+
+.lamp-4 {
+  color: deepskyblue !important;
+  font-weight: bold;
+}
+
+.lamp-5 {
+  color: crimson !important;
+  font-weight: bold;
+}
+
+.lamp-6 {
+  color: gold !important;
+  font-weight: bold;
+}
+
+.lamp-7 {
+  color: #20c1f7 !important;
+  font-weight: bold;
+}
+
+/*iidx version styling*/
+
+.version-0 {
+  font-weight: bold;
+}
+
+.version-1 {
+  background: linear-gradient(90deg, #ffd259, #fafaf9 2.5rem, #ffd259 6rem);
+  color: transparent !important;
+  background-clip: text;
+  font-weight: bold;
+}
+
+.version-2 {
+  background: linear-gradient(90deg, #ffd259, #fafaf9 2.5rem, #ffd259 6rem);
+  color: transparent !important;
+  background-clip: text;
+  font-weight: bold;
+}
+
+.version-3 {
+  text-shadow:
+    -1px -1px 0px hotpink,
+    1px -1px 0px hotpink,
+    -1px 1px 0px hotpink,
+    1px 1px 0px hotpink;
+  font-weight: bold;
+}
+
+.version-4 {
+  color: rgb(255, 58, 58) !important;
+  text-shadow: 0px 2px black;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.version-5 {
+  color: #426ac7 !important;
+  font-weight: bold;
+}
+
+.version-5 > abbr[title]::after {
+  content: "|";
+  color: #f5a100;
+  font-weight: bold;
+}
+
+.version-6 {
+  text-decoration: underline;
+  text-decoration-color: rgba(153, 131, 190);
+  text-decoration-thickness: 0.2rem;
+  font-weight: bold;
+}
+
+.version-7 {
+  text-shadow:
+    -1px -1px 0px black,
+    1px -1px 0px black,
+    -1px 1px 0px black,
+    1px 1px 0px black;
+  font-style: italic;
+}
+
+.version-8 {
+  text-shadow:
+    -1px -1px 0px orange,
+    1px -1px 0px orange,
+    -1px 1px 0px orange,
+    1px 1px 0px orange;
+}
+
+.version-9 {
+  color: black !important;
+  text-shadow:
+    -1px -1px 0px white,
+    1px -1px 0px white,
+    -1px 1px 0px white,
+    1px 1px 0px white;
+  font-style: italic;
+}
+
+.version-10 > abbr[title]::before {
+  content: "᛫";
+  font-weight: bold;
+  color: #ff1a00;
+}
+
+.version-10 {
+  color: #426ac7 !important;
+  font-weight: bold;
+}
+
+.version-10 > abbr[title]::after {
+  content: ".";
+  color: #ff1a00;
+}
+
+/* make sure it's targeting the text width and not the td width */
+.version-11 > abbr[title] {
+  background: linear-gradient(
+    90deg,
+    #aab0ca 2.3rem,
+    #ffffff 2.3rem,
+    #ff0000 2.3rem,
+    #ff0000
+  );
+  color: transparent !important;
+  background-clip: text;
+  font-weight: bold;
+}
+
+.version-12 {
+  color: #006eba !important;
+  text-shadow:
+    -1px -1px 0px white,
+    1px -1px 0px white,
+    -1px 1px 0px white,
+    1px 1px 0px white;
+  font-weight: bold;
+}
+
+.version-13 {
+  text-shadow: 0px 4px black;
+  font-weight: bold;
+}
+
+.version-14 {
+  text-shadow:
+    -1px -1px 0px black,
+    1px -1px 0px black,
+    -1px 1px 0px black,
+    1px 1px 0px black;
+  color: gold !important;
+  font-weight: bold;
+}
+
+.version-15 {
+  text-shadow:
+    -1px -1px 0px rgba(86, 24, 0),
+    1px -1px 0px rgba(86, 24, 0),
+    -1px 1px 0px rgba(86, 24, 0),
+    1px 1px 0px rgba(86, 24, 0);
+  font-weight: bold;
+}
+
+.version-16 {
+  color: #fbd0e2 !important;
+  text-shadow:
+    -1px -1px 0px #501a30,
+    1px -1px 0px #501a30,
+    -1px 1px 0px #501a30,
+    1px 1px 0px #501a30;
+  font-weight: bold;
+}
+
+.version-17 {
+  text-shadow:
+    -1px -1px 0px #4fbbe0,
+    1px -1px 0px #4fbbe0,
+    -1px 1px 0px #4fbbe0,
+    1px 1px 0px #4fbbe0;
+  font-weight: bold;
+}
+
+.version-18 {
+  color: #df5a01 !important;
+  text-shadow:
+    -1px -1px 0px white,
+    1px -1px 0px white,
+    -1px 1px 0px white,
+    1px 1px 0px white;
+  font-weight: bold;
+}
+
+.version-19 {
+  color: #20c1f7 !important;
+  text-shadow: -1px -1px 0px #ed6d00;
+  font-weight: bold;
+}
+
+.version-20 > abbr[title] {
+  background: linear-gradient(
+    90deg,
+    #e60021 1.04rem,
+    #ffeb3e 1rem,
+    #ffeb3e 2.21rem,
+    #61b1de 2.21rem,
+    #61b1de
+  );
+  color: transparent !important;
+  background-clip: text;
+  font-weight: bold;
+  text-decoration: underline !important;
+  text-decoration-color: white !important;
+}
+
+.version-21 {
+  color: #e50012 !important;
+  text-shadow:
+    -1px -1px 0px #c4c4c4,
+    1px -1px 0px #c4c4c4,
+    -1px 1px 0px #c4c4c4,
+    1px 1px 0px #c4c4c4;
+  font-weight: bold;
+}
+
+.version-22 > abbr[title] {
+  background: linear-gradient(
+    165deg,
+    #faf8f8 0.5rem,
+    #faf8f8 1.32rem,
+    #b1437a 1.32rem,
+    #b1437a 3.5rem,
+    #b1437a
+  );
+  color: transparent !important;
+  background-clip: text;
+  font-weight: bold;
+}
+
+.version-23 > abbr[title] {
+  background: linear-gradient(
+    to bottom,
+    #fdd957 20%,
+    #fdd957 50%,
+    #f8cb00 50%,
+    #f89e00 100%
+  );
+  color: transparent !important;
+  background-clip: text;
+  font-weight: bold;
+}

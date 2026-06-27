@@ -1,0 +1,32 @@
+{{ define "chart-row" }}
+
+  <tr>
+    <td>
+      <abbr title="{{ .TitleLatinized }}"
+      {{if eq .ChartType "boss"}}
+        class="text-warning fw-bold"
+      {{end}}
+      >
+        {{ .Title }}
+      </abbr>
+    </td>
+    <td
+    {{if eq .ChartType "boss"}}
+        class="text-warning fw-bold"
+      {{end}}
+      >
+      {{ .Artist }}
+    </td>
+    <td 
+    {{if eq .ChartType "boss"}}
+        class="text-warning fw-bold"
+      {{end}}
+      >
+      {{ .Level }}
+    </td>
+    <td class="version-{{ .VersionId }}">
+      <abbr title="{{ .Version }}">{{ .Version }}</abbr>
+    </td>
+  </tr>
+
+{{ end }}

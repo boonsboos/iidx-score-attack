@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IIDX Score Aanval</title>
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="/static/v.css" />
+  </head>
+  <body>
+    <div class="container gap-3 d-flex flex-column">
+      <div>
+        <a class="text-decoration-none text-light-emphasis" href="/">
+          <h1 class="display-2">IIDX Score Aanval</h1>
+        </a>
+        <p class="lead">Een beatmania IIDX highscore competitie.</p>
+      </div>
+
+      <hr />
+
+      <h2>Scores</h2>
+
+      <p>
+        Bekijk de scores van alle deelnemers aan de score aanval. Binnenkort kun
+        je hier ook vorige brackets bekijken.
+      </p>
+
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="lower-bracket-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#lower-bracket"
+            type="button"
+            role="tab"
+            aria-controls="lower-bracket"
+            aria-selected="true"
+          >
+            Lower bracket
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="upper-bracket-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#upper-bracket"
+            type="button"
+            role="tab"
+            aria-controls="upper-bracket"
+            aria-selected="false"
+          >
+            Upper bracket
+          </button>
+        </li>
+      </ul>
+      <div class="tab-content" id="scoresTab">
+        <div
+          class="tab-pane fade show active"
+          id="lower-bracket"
+          role="tabpanel"
+          aria-labelledby="lower-bracket-tab"
+          tabindex="0"
+        >
+          <table
+            id="lower-bracket-table"
+            class="table table-striped table-hover"
+          >
+            <thead>
+              <tr>
+                <th>DJ Name</th>
+                <th>Rating</th>
+                {{ range .LowerBracketCharts }}
+                <th
+                  id="{{ .TitleLatinized }}-{{ .ChartLevel }}"
+                >
+                  <abbr title="{{ .TitleLatinized }}">
+                    <div {{ if eq .ChartType "boss" }} class="text-warning" {{end}}>
+                      {{ .Title }}
+                    </div>
+                    <div>{{ .ChartLevel }}</div>
+                  </abbr>
+                </th>
+                {{ end }}
+              </tr>
+            </thead>
+            <tbody>
+              {{ range .LowerBracket }} {{ template "score-row" . }} {{ end }}
+            </tbody>
+          </table>
+        </div>
+        <div
+          class="tab-pane fade"
+          id="upper-bracket"
+          role="tabpanel"
+          aria-labelledby="upper-bracket-tab"
+          tabindex="0"
+        >
+          <table
+            id="upper-bracket-table"
+            class="table table-striped table-hover"
+          >
+            <thead>
+              <tr>
+                <th>DJ Name</th>
+                <th>Rating</th>
+                {{ range .UpperBracketCharts }}
+                <th
+                  id="{{ .TitleLatinized }}-{{ .ChartLevel }}"
+                >
+                  <abbr title="{{ .TitleLatinized }}">
+                    <div {{ if eq .ChartType "boss" }} class="text-warning" {{end}}>
+                      {{ .Title }}
+                    </div>
+                    <div>{{ .ChartLevel }}</div>
+                  </abbr>
+                </th>
+                {{ end}}
+              </tr>
+            </thead>
+            <tbody>
+              {{ range .UpperBracket }} {{ template "score-row" . }} {{ end }}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    {{ template "footer" }}
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>
