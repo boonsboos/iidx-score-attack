@@ -1,6 +1,6 @@
 # iidx score attack
 
-website to facilitate iidx score attack events
+website to facilitate iidx score attack events, heavily inspired by [Bottoni Monthly Score Attack](https://github.com/air-afother/tournament-table)
 
 live instance: https://iidx.otoge.win
 
