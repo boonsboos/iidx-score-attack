@@ -76,6 +76,11 @@ func prepareJob() ([]models.BracketChart, []models.Player, bool) {
 	// fetch all bracket charts for the active chart pool
 	activeBracketCharts, err := db.GetPoolCharts(activeChartPool)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Println("No active bracket charts found for pool", activeChartPool.ID, activeChartPool.Title, "- skipping job cycle")
+			return nil, nil, false
+		}
+
 		log.Panicln("Error occurred while fetching active bracket charts:", err)
 	}
 
@@ -217,9 +222,17 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 		return
 	}
 
-	// ban players that are 7 dan or higher from submitting scores to lower bracket
-	// we could probably save the score, but that would mean untangling it on the frontend.
+	// ban players that are 7 dan or higher from submitting scores to the lower bracket charts
 	if player.DanLevel >= 13 && matchingBracketChart.BracketType == "lower" {
+		// unless they already have scores in the bracket (e.g. they were 6 dan when they submitted earlier scores, and then made it to 7 dan afterwards)
+		existingScores, err := gorm.G[models.Score](db.DB).
+			Where("player_id = ? AND bracket_chart_id in ?", player.ID, lo.Map(activeBracketCharts, func(chart models.BracketChart, idx int) uint { return chart.ID })).
+			Count(db.DefaultTimeout(), "*")
+		if existingScores > 0 || err == nil {
+			log.Println("Player", player.GameID, "is 7 dan+ and already has scores in the lower bracket chart", matchingBracketChart.ID, "so we will allow them to keep participating in the lower bracket.")
+			return
+		}
+
 		log.Println("Player", player.GameID, "is 7 dan+ and submitted a score to the lower bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
 		return
 	}
