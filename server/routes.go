@@ -40,6 +40,26 @@ func RegisterRoutes(router *gin.Engine) {
 		"ratingFormat": func(rating float64) string {
 			return fmt.Sprintf("%.2f", rating)
 		},
+		"danString": func(danLevel int) string {
+			return models.DanStrings[danLevel]
+		},
+		"danColor": func(danLevel int) string {
+			if danLevel < 7 {
+				return "dan-kyu"
+			} else if danLevel <= 14 {
+				return "dan-bluedan"
+			} else if danLevel <= 16 {
+				return "dan-reddan"
+			} else if danLevel == 17 {
+				return "dan-chuuden"
+			} else if danLevel == 18 {
+				return "dan-kaiden"
+			}
+			return ""
+		},
+		"danStringLatin": func(danLevel int) string {
+			return models.DanStringsLatin[danLevel]
+		},
 	})
 
 	log.Println("Registering custom functions OK")

@@ -1,6 +1,13 @@
 {{ define "score-row" }}
 <tr>
-  <td>{{ .Player.DJName }}</td>
+  <td>
+    <div>{{ .Player.DJName }}</div>
+    <div class="{{ danColor .Player.SPDanLevel }}">
+      <abbr title="Dan Level: {{ danStringLatin .Player.SPDanLevel }}">
+        {{ danString .Player.SPDanLevel }}
+      </abbr>
+    </div>
+  </td>
   <td>{{ .Rating }}</td>
   {{ range .Scores }}
   <td data-sort="{{.ExScore}}">

@@ -224,17 +224,23 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 
 	// ban players that are 7 dan or higher from submitting scores to the lower bracket charts
 	if player.DanLevel >= 13 && matchingBracketChart.BracketType == "lower" {
-		// unless they already have scores in the bracket (e.g. they were 6 dan when they submitted earlier scores, and then made it to 7 dan afterwards)
+		// unless they already have scores in the bracket (e.g. they were 6 dan when they submitted earlier scores, and then made it to 7 dan)
 		existingScores, err := gorm.G[models.Score](db.DB).
 			Where("player_id = ? AND bracket_chart_id in ?", player.ID, lo.Map(activeBracketCharts, func(chart models.BracketChart, idx int) uint { return chart.ID })).
 			Count(db.DefaultTimeout(), "*")
-		if existingScores > 0 || err == nil {
-			log.Println("Player", player.GameID, "is 7 dan+ and already has scores in the lower bracket chart", matchingBracketChart.ID, "so we will allow them to keep participating in the lower bracket.")
+
+		if err != nil {
+			// TODO: notify maintainer
+			log.Println("Failed to determine if a recently 7dan+ player has a score in the lower bracket", err)
 			return
 		}
 
-		log.Println("Player", player.GameID, "is 7 dan+ and submitted a score to the lower bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
-		return
+		if existingScores == 0 {
+			log.Println("Player", player.GameID, "is 7 dan+ and submitted a score to the lower bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
+			return
+		}
+
+		log.Println("Player", player.GameID, "is 7 dan+ and already has scores in the lower bracket chart", matchingBracketChart.ID, "so we will allow them to keep participating in the lower bracket.")
 	}
 
 	log.Println("Processing score for player", player.GameID, "on chart", score.SongId, score.Difficulty)

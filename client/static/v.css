@@ -57,6 +57,34 @@ adapted from https://github.com/tofsjonas/sortable/blob/4a3be13ba78c3c85510dc201
   font-weight: bold;
 }
 
+/* course level styling */
+
+.dan-kyu {
+  color: lightgreen !important;
+}
+
+.dan-bluedan {
+  color: dodgerblue !important;
+  font-weight: bold;
+}
+
+.dan-reddan {
+  color: orangered !important;
+  font-weight: bold;
+}
+
+.dan-chuuden {
+  text-shadow: lightsteelblue 0px 0px 10px;
+  color: lightgray !important;
+  font-weight: bold;
+}
+
+.dan-kaiden {
+  text-shadow: darkgoldenrod 0px 0px 10px;
+  color: gold !important;
+  font-weight: bold;
+}
+
 /*iidx version styling*/
 
 .version-0 {
