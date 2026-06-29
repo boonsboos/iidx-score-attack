@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -183,8 +184,8 @@ func createNewPool(context *gin.Context) {
 }
 
 type addBracketChartRequest struct {
-	PoolId      uint   `json:"pool_id"`
-	ChartId     uint   `json:"chart_id"`
+	SongId      uint   `json:"song_id"`
+	Difficulty  string `json:"difficulty"`   // B, N, H, A or L
 	BracketType string `json:"bracket_type"` // "upper" or "lower"
 	ChartType   string `json:"chart_type"`   // "normal" or "boss"
 }
@@ -194,13 +195,47 @@ func addChartToPool(context *gin.Context) {
 		return
 	}
 
+	var poolPath struct {
+		Id uint `uri:"id" binding:"required"`
+	}
+	err := context.ShouldBindUri(&poolPath)
+	if err != nil {
+		context.JSON(400, gin.H{"error": "not a valid pool id"})
+		return
+	}
+
 	var request addBracketChartRequest
-	err := context.ShouldBindJSON(&request)
+	err = context.ShouldBindJSON(&request)
 	if err != nil {
 		context.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
 
+	chart, err := gorm.G[models.Chart](db.DB).
+		Where("song_id = ? AND difficulty = ?", request.SongId, request.Difficulty).
+		First(db.DefaultTimeout())
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			context.JSON(400, gin.H{"error": "Chart not found"})
+			return
+		}
+
+		context.JSON(500, gin.H{"error": "Error occurred while fetching chart"})
+		log.Println("Error occurred while fetching chart: ", err)
+		return
+	}
+
+	gorm.G[models.BracketChart](db.DB).Create(db.DefaultTimeout(), &models.BracketChart{
+		PoolID:      poolPath.Id,
+		ChartID:     chart.ID,
+		BracketType: request.BracketType,
+		ChartType:   request.ChartType,
+	})
+
+	context.JSON(200, gin.H{
+		"message": "Successfully added chart to pool",
+	})
 }
 
 func updateChartMaxScores(context *gin.Context) {
