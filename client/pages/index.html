@@ -16,7 +16,7 @@
   </head>
   <body>
     <div class="container gap-3 d-flex flex-column">
-      <div>
+      <div class="pt-2">
         <a class="text-decoration-none text-light-emphasis" href="/">
           <h1 class="display-2">IIDX Score Aanval</h1>
         </a>
@@ -52,50 +52,56 @@
       </div>
 
       <hr />
+      
       <main role="main">
-        <h2> {{ .PoolName }} charts</h2>
+        {{ if .BracketActive }}
+          <h2> {{ .PoolName }} charts</h2>
 
-        <p>Bracket is actief vanaf {{ .StartTime }} tot {{ .EndTime }}</p>
+          <p>Bracket is actief vanaf {{ .StartTime }} tot {{ .EndTime }}</p>
 
-        <div>
-          <a href="/scores/lower">
-            <h3>Lower bracket</h3>
-          </a>
-          <table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Titel</th>
-                <th>Artiest</th>
-                <th>Chart</th>
-                <th>Versie</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{ range .LowerBracketCharts }} {{ template "chart-row" . }} {{
-              end }}
-            </tbody>
-          </table>
-        </div>
+          <div>
+            <a href="/scores/lower">
+              <h3>Lower bracket</h3>
+            </a>
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Titel</th>
+                  <th>Artiest</th>
+                  <th>Chart</th>
+                  <th>Versie</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ range .LowerBracketCharts }} {{ template "chart-row" . }} {{
+                end }}
+              </tbody>
+            </table>
+          </div>
 
-        <div>
-          <a href="/scores/upper">
-            <h3>Upper bracket</h3>
-          </a>
-          <table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Titel</th>
-                <th>Artiest</th>
-                <th>Chart</th>
-                <th>Versie</th>
-              </tr>
-            </thead>
-            <tbody>
-              {{ range .UpperBracketCharts }} {{ template "chart-row" . }} {{
-              end }}
-            </tbody>
-          </table>
-        </div>
+          <div>
+            <a href="/scores/upper">
+              <h3>Upper bracket</h3>
+            </a>
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Titel</th>
+                  <th>Artiest</th>
+                  <th>Chart</th>
+                  <th>Versie</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ range .UpperBracketCharts }} {{ template "chart-row" . }} {{
+                end }}
+              </tbody>
+            </table>
+          </div>
+        {{ else }}
+          <h2 class="text-center">Er is momenteel geen actieve bracket</h2>
+          <p class="text-center">Kom later terug...</p>
+        {{ end }}
       </main>
 
       <hr />
