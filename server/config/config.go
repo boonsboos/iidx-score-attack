@@ -19,6 +19,7 @@ type Config struct {
 	ConnectionString string
 	AdminKey         string
 	WorkerInterval   int
+	EncryptionKey    string
 }
 
 func InitConfig() {

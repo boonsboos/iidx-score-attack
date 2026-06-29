@@ -10,8 +10,8 @@ type Player struct {
 	ID           uint           `json:"id" gorm:"index,primarykey"`
 	GameID       int            `json:"game_id" gorm:"unique"` // the xxxx-xxxx id in game, since DJName is not unique.
 	DJName       string         `json:"name"`
-	DanLevel     int            `json:"dan_level"`                  // 7k = 0, 1d = 7, ... 10d = 16, chuuden = 17, kaiden = 18
-	RefreshToken sql.NullString `json:"refresh_token" gorm:"index"` // can only be nil or "" if the user revoked access to us and we already tried to make a refresh request that failed.
+	DanLevel     int            `json:"dan_level"`                            // 7k = 0, 1d = 7, ... 10d = 16, chuuden = 17, kaiden = 18
+	RefreshToken sql.NullString `json:"refresh_token" gorm:"index,size:1024"` // can only be nil or "" if the user revoked access to us and we already tried to make a refresh request that failed.
 }
 
 // the pool of charts that are currently active for a score attack event

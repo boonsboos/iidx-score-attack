@@ -7,5 +7,6 @@
   "ApiBaseUrl": "https://example.com/api",
   "ConnectionString": "root:password@tcp(localhost:3306)/dbname",
   "AdminKey": "your_admin_key_here",
-  "WorkerInterval": 600
+  "WorkerInterval": 600,
+  "EncryptionKey": "your_encryption_key_here"
 }
