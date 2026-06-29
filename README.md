@@ -11,7 +11,9 @@ live instance: https://iidx.otoge.win
 - Show past chart pools [__________]
 - Show past bracket scores [_________]
 
-## frontend fixes to be done
+## pending changes
 
 - Add version styling for everything post-copula
 - Turn IIDX RED, DJ TROOPERS, EMPRESS, SIRIUS, LINCLE, tricoro, SINOBUZ, CANNON BALLERS, Rootage, BISTROVER, CastHour, RESIDENT and EPOLIS version stylings into SVGs
+- Translate site to English
+- Add a third, higher ("Master") bracket if enough players ask for it
