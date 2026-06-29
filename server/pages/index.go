@@ -13,7 +13,6 @@ import (
 )
 
 func Index(context *gin.Context) {
-
 	upperBracketCharts := make([]models.FrontendBracketChart, 0)
 	lowerBracketCharts := make([]models.FrontendBracketChart, 0)
 
