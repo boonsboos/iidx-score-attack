@@ -25,10 +25,11 @@ func Index(context *gin.Context) {
 			log.Println("Error fetching active chart pool:", err)
 		}
 	} else {
-		upper, lower, err := db.GetPoolChartsFrontend(activeChartPool)
+		master, upper, lower, err := db.GetPoolChartsFrontend(activeChartPool)
 		if err != nil {
 			log.Println("Error fetching active charts for frontend:", err)
 		} else {
+			masterBracketCharts = master
 			upperBracketCharts = upper
 			lowerBracketCharts = lower
 		}
