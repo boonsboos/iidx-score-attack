@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Scores | IIDX Nederland Score Aanval</title>
+    <title>Scores | IIDX NL Score Clash</title>
 
-    <meta property="og:title" content="Scores | IIDX Nederland Score Attack" />
+    <meta property="og:title" content="Scores | IIDX NL Score Clash" />
     <meta
       property="og:description"
-      content="Een beatmania IIDX highscore competitie."
+      content="A beatmania IIDX highscore competition."
     />
     <meta property="og:url" content="https://iidx.otoge.win/scores" />
 
@@ -24,9 +24,9 @@
     <div class="container gap-3 d-flex flex-column">
       <div class="pt-4">
         <a class="text-decoration-none text-light-emphasis" href="/">
-          <h1 class="display-2">IIDX Nederland Score Aanval</h1>
+          <h1 class="display-2">IIDX NL Score Clash</h1>
         </a>
-        <p class="lead">Een beatmania IIDX highscore competitie.</p>
+        <p class="lead">A beatmania IIDX highscore competition.</p>
       </div>
 
       <hr />
@@ -59,11 +59,11 @@
           </tbody>
         </table>
       {{ else if and (gt (len .BracketCharts) 0) (eq (len .Bracket) 0) }}
-        <h2 class="text-center">Nog niemand heeft gespeeld!</h2>
-        <p class="text-center">Word jij de eerste?</p>
+        <h2 class="text-center">No one has played yet!</h2>
+        <p class="text-center">Will you be the first?</p>
       {{ else }}
-        <h2 class="text-center">Er is momenteel geen actieve bracket</h2>
-        <p class="text-center">Kom later terug...</p>
+        <h2 class="text-center">There is currently no active bracket</h2>
+        <p class="text-center">Come back later...</p>
       {{ end }}
     </div>
 
