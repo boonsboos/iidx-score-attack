@@ -20,8 +20,11 @@ func RegisterRoutes(router *gin.Engine) {
 	router.GET("/", pages.Index)
 	router.GET("/success", pages.Success)
 	router.GET("/scores", pages.BracketSelect)
+
+	router.GET("/scores/master", pages.ScoresMaster)
 	router.GET("/scores/upper", pages.ScoresUpper)
 	router.GET("/scores/lower", pages.ScoresLower)
+
 	router.GET("/scores/bracket/:id", pages.BracketSelect)
 	router.GET("/privacy-policy", pages.CookiePrivacy)
 
@@ -44,6 +47,9 @@ func RegisterRoutes(router *gin.Engine) {
 		"danString": func(danLevel int) string {
 			return models.DanStrings[danLevel]
 		},
+		"danStringLatin": func(danLevel int) string {
+			return models.DanStringsLatin[danLevel]
+		},
 		"danColor": func(danLevel int) string {
 			if danLevel < 7 {
 				return "dan-kyu"
@@ -57,9 +63,6 @@ func RegisterRoutes(router *gin.Engine) {
 				return "dan-kaiden"
 			}
 			return ""
-		},
-		"danStringLatin": func(danLevel int) string {
-			return models.DanStringsLatin[danLevel]
 		},
 	})
 

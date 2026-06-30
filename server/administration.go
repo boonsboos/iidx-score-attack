@@ -186,7 +186,7 @@ func createNewPool(context *gin.Context) {
 type addBracketChartRequest struct {
 	SongId      uint   `json:"song_id"`
 	Difficulty  string `json:"difficulty"`   // B, N, H, A or L
-	BracketType string `json:"bracket_type"` // "upper" or "lower"
+	BracketType string `json:"bracket_type"` // "master" or "upper" or "lower"
 	ChartType   string `json:"chart_type"`   // "normal" or "boss"
 }
 

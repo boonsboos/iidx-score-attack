@@ -65,6 +65,33 @@ func ScoresUpper(context *gin.Context) {
 	})
 }
 
+func ScoresMaster(context *gin.Context) {
+
+	masterBracketCharts, err := GetBracketCharts("master")
+	if err != nil {
+		log.Println("Error occurred while fetching master bracket charts: ", err)
+	}
+
+	masterBracket := GetBracketScores(masterBracketCharts)
+
+	// ensure players with higher average rating are sorted for first
+	sort.Slice(masterBracket, func(i, j int) bool {
+		return masterBracket[i].Rating < masterBracket[j].Rating
+	})
+
+	context.HTML(200, "scores.html", gin.H{
+		"BracketCharts": lo.Map(masterBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
+			return models.ScorePageBracketChart{
+				Title:          chart.Chart.Song.Name,
+				TitleLatinized: chart.Chart.Song.NameLatinized,
+				ChartLevel:     "SP" + chart.Chart.Difficulty + strconv.Itoa(chart.Chart.Level),
+				ChartType:      chart.ChartType,
+			}
+		}),
+		"Bracket": masterBracket,
+	})
+}
+
 type scorePageChartScore struct {
 	Player models.Player `json:"player"`
 	Score  models.Score  `json:"score"`

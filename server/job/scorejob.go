@@ -222,25 +222,9 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 		return
 	}
 
-	// ban players that are 7 dan or higher from submitting scores to the lower bracket charts
-	if player.DanLevel >= 13 && matchingBracketChart.BracketType == "lower" {
-		// unless they already have scores in the bracket (e.g. they were 6 dan when they submitted earlier scores, and then made it to 7 dan)
-		existingScores, err := gorm.G[models.Score](db.DB).
-			Where("player_id = ? AND bracket_chart_id in ?", player.ID, lo.Map(activeBracketCharts, func(chart models.BracketChart, idx int) uint { return chart.ID })).
-			Count(db.DefaultTimeout(), "*")
-
-		if err != nil {
-			// TODO: notify maintainer
-			log.Println("Failed to determine if a recently 7dan+ player has a score in the lower bracket", err)
-			return
-		}
-
-		if existingScores == 0 {
-			log.Println("Player", player.GameID, "is 7 dan+ and submitted a score to the lower bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
-			return
-		}
-
-		log.Println("Player", player.GameID, "is 7 dan+ and already has scores in the lower bracket chart", matchingBracketChart.ID, "so we will allow them to keep participating in the lower bracket.")
+	playingInCorrectBracket := checkPlayerPlayingInCorrectBracket(player, matchingBracketChart, activeBracketCharts)
+	if !playingInCorrectBracket {
+		return
 	}
 
 	log.Println("Processing score for player", player.GameID, "on chart", score.SongId, score.Difficulty)
@@ -283,4 +267,50 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 				Timestamp: score.Timestamp,
 			})
 	}
+}
+
+// ban players that are 7 dan or higher from submitting scores to the lower bracket
+// unless they already have scores in the bracket (e.g. they were 6 dan when they submitted earlier scores, and then made it to 7 dan)
+// ban players that are kaiden or higher from submitting scores to the lower and upper bracket
+// unless they already have scores in the bracket (e.g. they were chuuden when they submitted earlier scores, and then made it to kaiden)
+func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
+	if player.DanLevel >= 13 && matchingBracketChart.BracketType == "lower" {
+		existingScores, err := gorm.G[models.Score](db.DB).
+			Where("player_id = ? AND bracket_chart_id in ?", player.ID, lo.Map(activeBracketCharts, func(chart models.BracketChart, idx int) uint { return chart.ID })).
+			Count(db.DefaultTimeout(), "*")
+
+		if err != nil {
+			// TODO: notify maintainer
+			log.Println("Failed to determine if a recently 7dan+ player has a score in the lower bracket", err)
+			return false
+		}
+
+		if existingScores == 0 {
+			log.Println("Player", player.GameID, "is 7 dan+ and submitted a score to the lower bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
+			return false
+		}
+
+		log.Println("Player", player.GameID, "is 7 dan+ and already has scores in the lower bracket chart", matchingBracketChart.ID, "so we will allow them to keep participating in the lower bracket.")
+	}
+
+	if player.DanLevel == 18 && matchingBracketChart.BracketType == "upper" {
+		existingScores, err := gorm.G[models.Score](db.DB).
+			Where("player_id = ? AND bracket_chart_id in ?", player.ID, lo.Map(activeBracketCharts, func(chart models.BracketChart, idx int) uint { return chart.ID })).
+			Count(db.DefaultTimeout(), "*")
+
+		if err != nil {
+			// TODO: notify maintainer
+			log.Println("Failed to determine if a recently kaiden player has a score in the upper bracket", err)
+			return false
+		}
+
+		if existingScores == 0 {
+			log.Println("Player", player.GameID, "is kaiden and submitted a score to upper bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
+			return false
+		}
+
+		log.Println("Player", player.GameID, "is kaiden and already has scores in the upper bracket so we will allow them to keep participating in the upper bracket.")
+	}
+
+	return true
 }

@@ -42,7 +42,7 @@ func GetPoolChartsScoresPage(pool models.ChartPool) ([]models.BracketChart, erro
 	return allCharts, nil
 }
 
-func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart, []models.FrontendBracketChart, error) {
+func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart, []models.FrontendBracketChart, []models.FrontendBracketChart, error) {
 	var allCharts []models.BracketChart
 
 	err := DB.Model(&models.BracketChart{}).
@@ -53,18 +53,28 @@ func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart
 		Order("bracket_charts.chart_type DESC, Chart__Song__name ASC").
 		Scan(&allCharts).Error
 	if err != nil {
-		return nil, nil, fmt.Errorf("error occurred while fetching pool charts: %w", err)
+		return nil, nil, nil, fmt.Errorf("error occurred while fetching pool charts: %w", err)
 	}
 
-	upperCharts := lo.Filter(allCharts, func(chart models.BracketChart, i int) bool {
-		return chart.BracketType == "upper"
-	})
+	masterCharts := filterByBracketType(allCharts, "master")
+	upperCharts := filterByBracketType(allCharts, "upper")
+	lowerCharts := filterByBracketType(allCharts, "lower")
 
-	lowerCharts := lo.Filter(allCharts, func(chart models.BracketChart, i int) bool {
-		return chart.BracketType == "lower"
-	})
+	masterFrontendCharts := mapToFrontendBracketChart(masterCharts)
+	upperFrontendCharts := mapToFrontendBracketChart(upperCharts)
+	lowerFrontendCharts := mapToFrontendBracketChart(lowerCharts)
 
-	upperFrontendCharts := lo.Map(upperCharts, func(chart models.BracketChart, i int) models.FrontendBracketChart {
+	return masterFrontendCharts, upperFrontendCharts, lowerFrontendCharts, nil
+}
+
+func filterByBracketType(charts []models.BracketChart, bracketType string) []models.BracketChart {
+	return lo.Filter(charts, func(chart models.BracketChart, i int) bool {
+		return chart.BracketType == bracketType
+	})
+}
+
+func mapToFrontendBracketChart(charts []models.BracketChart) []models.FrontendBracketChart {
+	return lo.Map(charts, func(chart models.BracketChart, i int) models.FrontendBracketChart {
 		return models.FrontendBracketChart{
 			Title:          chart.Chart.Song.Name,
 			TitleLatinized: chart.Chart.Song.NameLatinized,
@@ -75,18 +85,4 @@ func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart
 			ChartType:      chart.ChartType,
 		}
 	})
-
-	lowerFrontendCharts := lo.Map(lowerCharts, func(chart models.BracketChart, i int) models.FrontendBracketChart {
-		return models.FrontendBracketChart{
-			Title:          chart.Chart.Song.Name,
-			TitleLatinized: chart.Chart.Song.NameLatinized,
-			Artist:         chart.Chart.Song.Artist,
-			ChartLevel:     "SP" + chart.Chart.Difficulty + strconv.Itoa(chart.Chart.Level),
-			Version:        chart.Chart.Song.Version.Name,
-			VersionId:      chart.Chart.Song.Version.ID,
-			ChartType:      chart.ChartType,
-		}
-	})
-
-	return upperFrontendCharts, lowerFrontendCharts, nil
 }

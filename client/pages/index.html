@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IIDX Nederland Score Aanval</title>
+    <title>IIDX NL Score Clash</title>
 
-    <meta property="og:title" content="IIDX Nederland Score Attack" />
+    <meta property="og:title" content="IIDX NL Score Clash" />
     <meta
       property="og:description"
-      content="Een beatmania IIDX highscore competitie."
+      content="A beatmania IIDX highscore competition. {{ if .BracketActive }}{{ .PoolName }} is now live until {{ .EndTime }}!{{ end }}"
     />
     <meta property="og:url" content="https://iidx.otoge.win" />
 
@@ -25,23 +25,23 @@
     <div class="container gap-3 d-flex flex-column">
       <div class="pt-4">
         <a class="text-decoration-none text-light-emphasis" href="/">
-          <h1 class="display-2">IIDX Nederland Score Aanval</h1>
+          <h1 class="display-2">IIDX NL Score Clash</h1>
         </a>
-        <p class="lead">Een beatmania IIDX highscore competitie.</p>
+        <p class="lead">A beatmania IIDX highscore competition.</p>
       </div>
 
       <div class="d-flex gap-3 justify-content-around flex-wrap">
         <div class="card col-md-5">
           <div class="card-body">
-            <h5 class="card-title">Meedoen</h5>
+            <h5 class="card-title">Sign up</h5>
             <p class="card-text">
-              Log in met je 🌸 account om mee te doen aan de score aanval. Je
-              scores worden elke 10 minuten bijgewerkt.
+              Log in with your 🌸 account to participate in the score clash. Your
+              scores will be updated every 10 minutes.
             </p>
             <a
               href="https://kailua.projectflower.eu/oauth/authorize?client_id={{ .ClientId }}&response_type=code&redirect_uri={{ .RedirectURI }}&scope=settings_read"
               class="btn btn-primary"
-              >🌸 Meedoen</a
+              >🌸 Sign up</a
             >
           </div>
         </div>
@@ -50,10 +50,10 @@
           <div class="card-body">
             <h5 class="card-title">Scores</h5>
             <p class="card-text">
-              Bekijk de scores van alle deelnemers aan de score aanval. Je kunt
-              hier ook vorige brackets bekijken. (WIP)
+              View the scores of all participants in the score clash. You can
+              also view previous brackets here. (WIP)
             </p>
-            <a href="/scores" class="btn btn-primary">Naar scores</a>
+            <a href="/scores" class="btn btn-primary">View scores</a>
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@
         {{ if .BracketActive }}
           <h2> {{ .PoolName }} charts</h2>
 
-          <p>Bracket is actief vanaf {{ .StartTime }} tot {{ .EndTime }}</p>
+          <p>Bracket is active from {{ .StartTime }} until {{ .EndTime }}</p>
 
           <div>
             <a href="/scores/lower">
@@ -73,10 +73,10 @@
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
-                  <th>Titel</th>
-                  <th>Artiest</th>
+                  <th>Title</th>
+                  <th>Artist</th>
                   <th>Chart</th>
-                  <th>Versie</th>
+                  <th>Version</th>
                 </tr>
               </thead>
               <tbody>
@@ -93,14 +93,34 @@
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
-                  <th>Titel</th>
-                  <th>Artiest</th>
+                  <th>Title</th>
+                  <th>Artist</th>
                   <th>Chart</th>
-                  <th>Versie</th>
+                  <th>Version</th>
                 </tr>
               </thead>
               <tbody>
                 {{ range .UpperBracketCharts }} {{ template "chart-row" . }} {{
+                end }}
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <a href="/scores/master">
+              <h3>Master bracket</h3>
+            </a>
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Artist</th>
+                  <th>Chart</th>
+                  <th>Version</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ range .MasterBracketCharts }} {{ template "chart-row" . }} {{
                 end }}
               </tbody>
             </table>
@@ -112,12 +132,16 @@
       </main>
 
       <hr />
-      <h2>Explanation</h2>
+      <h2>General information</h2>
       <section>
         <h3 class="text-decoration-underline">> How does it work?</h3>
         <p>
-          Every month, three brackets of 6 charts are selected for the score clash. The lower bracket is for less experienced players, up to 6th dan. The upper bracket is for more experienced players, 7th dan and above. 
-          The master bracket is aimed at players around 9th to 10th dan and up. 
+          Every month, three brackets of 6 charts are selected for the score clash.
+          The lower bracket is aimed at newer players, up to 6th dan. 
+          The upper bracket is for more experienced players, 7th dan and above. 
+          The master bracket is aimed at players around 9th to 10th dan and up.
+          <br />
+          If you are 7th dan or higher, you can <i>only</i> submit scores to the upper bracket or master bracket. If you are kaiden, you can <i>only</i> submit scores to the master bracket. This is to ensure fair competition within each bracket.
         </p>
         <p>
           Each bracket has 5 normal charts and 1 boss chart. The boss chart is an extra challenge that yields <b>2x</b> the points of a normal chart.
