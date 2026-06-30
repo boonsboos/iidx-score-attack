@@ -35,13 +35,13 @@
           <div class="card-body">
             <h5 class="card-title">Sign up</h5>
             <p class="card-text">
-              Log in with your 🌸 account to participate. Your
+              Log in with your <abbr title="flower">🌸</abbr> account to participate. Your
               scores will be updated every 10 minutes.
             </p>
             <a
               href="https://kailua.projectflower.eu/oauth/authorize?client_id={{ .ClientId }}&response_type=code&redirect_uri={{ .RedirectURI }}&scope=settings_read"
               class="btn btn-primary"
-              >🌸 Sign up</a
+              ><abbr title="flower">🌸</abbr> Sign up</a
             >
           </div>
         </div>
@@ -164,7 +164,18 @@
         </p>
       </section>
       <section>
-        <h3 class="text-decoration-underline">How do I read the chart levels?</h3>
+        <h3 class="text-decoration-underline pb-2">> How do I play?</h3>
+        <div class="alert alert-warning" role="alert">
+          The cabinet must be registered on <abbr title="flower">🌸</abbr> in order to participate. If it is not registered on that server, you will not be able to participate.
+        </div>
+        <p>Press the button at the top of this page to sign up with your <abbr title="flower">🌸</abbr> account.</p>
+        <p>
+          If you are a new player and do not yet have a <abbr title="flower">🌸</abbr> account, please follow the instructions on <a href="https://iidx.org/absolute_beginner/firstcredit#ac-playing-the-arcade-game-for-the-first-time">IIDX.org</a> for beginner information on how to start the game.
+          This website has much more information on how to play the game, so please read it carefully. Ask your arcade operator or another player for help if you need assistance with registering your card.
+        </p>
+      </section>
+      <section>
+        <h3 class="text-decoration-underline">> How do I read the chart levels?</h3>
         <p>
           The difficulty scale in IIDX ranges from 1 to 12. IIDX has 5
           different difficulty brackets: Beginner, Normal, Hyper, Another
@@ -183,6 +194,7 @@
             </li>
           </ul>
         </p>
+      </section>
     </div>
 
     {{ template "footer" }}
