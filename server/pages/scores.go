@@ -224,9 +224,11 @@ func CalculatePerChartRating(charts []models.BracketChart, PlayerScores map[mode
 				Score:  score,
 			})
 		}
+	}
 
-		sort.SliceStable(scores, func(i, j int) bool {
-			return scores[i].Ex > scores[j].Ex
+	for _, chartScores := range Placements {
+		sort.SliceStable(chartScores, func(i, j int) bool {
+			return chartScores[i].Score.Ex > chartScores[j].Score.Ex
 		})
 	}
 
