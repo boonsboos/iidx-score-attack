@@ -78,8 +78,8 @@ func ScoresMaster(context *gin.Context) {
 	masterBracket := GetBracketScores(masterBracketCharts)
 
 	// ensure players with higher average rating are sorted for first
-	sort.Slice(masterBracket, func(i, j int) bool {
-		return masterBracket[i].Rating < masterBracket[j].Rating
+	sort.SliceStable(masterBracket, func(i, j int) bool {
+		return masterBracket[i].Rating > masterBracket[j].Rating
 	})
 
 	context.HTML(200, "scores.html", gin.H{
@@ -161,7 +161,7 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 
 	// sort playerScore by chartId in the order of BracketCharts to match the order of charts in the frontend
 	for _, playerScore := range frontendPlayerScoreList {
-		sort.Slice(playerScore.Scores, func(i, j int) bool {
+		sort.SliceStable(playerScore.Scores, func(i, j int) bool {
 			chartIdI := playerScore.Scores[i].ChartId
 			chartIdJ := playerScore.Scores[j].ChartId
 			chartIndexI := lo.IndexOf(chartsById, chartIdI)
@@ -171,11 +171,6 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 	}
 
 	frontendPlayerScoreList = CalculatePlayerTotalRatings(frontendPlayerScoreList, charts, players, scores)
-
-	// sort descending
-	sort.Slice(frontendPlayerScoreList, func(i, j int) bool {
-		return frontendPlayerScoreList[i].Rating > frontendPlayerScoreList[j].Rating
-	})
 
 	return frontendPlayerScoreList
 }
