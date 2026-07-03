@@ -8,7 +8,10 @@
       </abbr>
     </div>
   </td>
-  <td style="color: hsl({{ .Rating }}deg, 50%, 50%) !important;">
+  <td
+    style="color: hsl({{ .Rating }}deg, 50%, 50%) !important;"
+    class="fw-bold"
+  >
     {{ ratingFormat .Rating }}
   </td>
   {{ range .Scores }}
@@ -17,7 +20,9 @@
       <div>{{ .ExScore }} EX <span class="fw-bold">{{ .Rank }}</span></div>
       <div>{{ .ScoreRate }} | {{ .Misscount }} BP</div>
       <div>
-        <span style="color: hsl({{ .Rating }}deg, 50%, 50%) !important;"
+        <span
+          style="color: hsl({{ .Rating }}deg, 50%, 50%) !important;"
+          class="fw-bold"
           >{{ ratingFormat .Rating }}</span
         >
         rating
