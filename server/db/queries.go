@@ -42,6 +42,14 @@ func GetPoolChartsScoresPage(pool models.ChartPool) ([]models.BracketChart, erro
 	return allCharts, nil
 }
 
+func GetCurrentlyActiveChartPoolStartTime() (time.Time, time.Time, error) {
+	activePool, err := GetCurrentlyActiveChartPool()
+	if err != nil {
+		return time.Time{}, time.Time{}, err
+	}
+	return activePool.ActiveFrom, activePool.ActiveUntil, nil
+}
+
 func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart, []models.FrontendBracketChart, []models.FrontendBracketChart, error) {
 	var allCharts []models.BracketChart
 

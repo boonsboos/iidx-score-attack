@@ -157,8 +157,18 @@ func playerJob(player models.Player, activeBracketCharts []models.BracketChart) 
 
 	log.Println("Fetched last", len(scores), "scores for player", player.GameID)
 
+	poolStartTime, poolEndTime, err := db.GetCurrentlyActiveChartPoolStartTime()
+	if err != nil {
+		log.Println("Error occurred while fetching active chart pool start time for player", player.GameID, ":", err)
+		return
+	}
+
 	var updatedScores int
 	for _, score := range scores {
+		if score.Timestamp.Before(poolStartTime) || score.Timestamp.After(poolEndTime) {
+			continue
+		}
+
 		updatedScores += analyzeScore(activeBracketCharts, score, player)
 	}
 	log.Println("Updated", updatedScores, "scores for player", player.GameID)
