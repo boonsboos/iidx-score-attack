@@ -270,6 +270,11 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 			score.MissCount = existingScore.Misscount
 		}
 
+		// if the existing score has a misscount of -1, it means the player quit out on their previous attempt, so we should keep the new misscount
+		if existingScore.Misscount == -1 {
+			existingScore.Misscount = score.MissCount
+		}
+
 		gorm.G[models.Score](db.DB).
 			Where("player_id = ? AND bracket_chart_id = ?", player.ID, matchingBracketChart.ID).
 			Updates(db.DefaultTimeout(), models.Score{
