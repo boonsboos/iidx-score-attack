@@ -138,10 +138,6 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 		PlayerScores[player] = playerScores
 	})
 
-	chartsById := lo.Map(charts, func(chart models.BracketChart, index int) uint {
-		return chart.ID
-	})
-
 	frontendPlayerScores := CalculatePerChartRating(charts, PlayerScores)
 
 	var frontendPlayerScoreList []models.ScorePagePlayerScore = make([]models.ScorePagePlayerScore, 0)
@@ -156,6 +152,10 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 	}
 
 	frontendPlayerScoreList = CalculatePlayerTotalRatings(frontendPlayerScoreList, charts, players, scores)
+
+	chartsById := lo.Map(charts, func(chart models.BracketChart, index int) uint {
+		return chart.ID
+	})
 
 	// sort playerScore by chartId in the order of BracketCharts to match the order of charts in the frontend
 	for _, scores := range frontendPlayerScoreList {
