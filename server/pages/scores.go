@@ -142,17 +142,6 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 		return chart.ID
 	})
 
-	// sort playerScore by chartId in the order of BracketCharts to match the order of charts in the frontend
-	for _, scores := range PlayerScores {
-		sort.SliceStable(scores, func(i, j int) bool {
-			chartIdI := scores[i].BracketChartID
-			chartIdJ := scores[j].BracketChartID
-			chartIndexI := lo.IndexOf(chartsById, chartIdI)
-			chartIndexJ := lo.IndexOf(chartsById, chartIdJ)
-			return chartIndexI < chartIndexJ
-		})
-	}
-
 	frontendPlayerScores := CalculatePerChartRating(charts, PlayerScores)
 
 	var frontendPlayerScoreList []models.ScorePagePlayerScore = make([]models.ScorePagePlayerScore, 0)
@@ -167,6 +156,17 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 	}
 
 	frontendPlayerScoreList = CalculatePlayerTotalRatings(frontendPlayerScoreList, charts, players, scores)
+
+	// sort playerScore by chartId in the order of BracketCharts to match the order of charts in the frontend
+	for _, scores := range frontendPlayerScoreList {
+		sort.SliceStable(scores.Scores, func(i, j int) bool {
+			chartIdI := scores.Scores[i].ChartId
+			chartIdJ := scores.Scores[j].ChartId
+			chartIndexI := lo.IndexOf(chartsById, chartIdI)
+			chartIndexJ := lo.IndexOf(chartsById, chartIdJ)
+			return chartIndexI < chartIndexJ
+		})
+	}
 
 	return frontendPlayerScoreList
 }
