@@ -3,6 +3,7 @@ package pages
 import (
 	"fmt"
 	"log"
+	"math"
 	"sort"
 	"strconv"
 
@@ -169,8 +170,14 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 		})
 	}
 
-	// calculate the total rating for each player based on the ratings of their scores and the weight of each chart
-	return CalculatePlayerTotalRatings(frontendPlayerScoreList, charts, players, scores)
+	frontendPlayerScoreList = CalculatePlayerTotalRatings(frontendPlayerScoreList, charts, players, scores)
+
+	// sort descending
+	sort.Slice(frontendPlayerScoreList, func(i, j int) bool {
+		return frontendPlayerScoreList[i].Rating > frontendPlayerScoreList[j].Rating
+	})
+
+	return frontendPlayerScoreList
 }
 
 func CalculatePlayerTotalRatings(frontendPlayerScoreList []models.ScorePagePlayerScore, charts []models.BracketChart, players []models.Player, scores []models.Score) []models.ScorePagePlayerScore {
@@ -248,6 +255,7 @@ func CalculatePerChartRating(charts []models.BracketChart, PlayerScores map[mode
 			})
 		}
 	}
+
 	return frontendPlayerScores
 }
 
@@ -302,7 +310,7 @@ func GetRating(rank int, totalPlayersWithScore int) float64 {
 	if totalPlayersWithScore == 0 {
 		return 0
 	}
-	return 100 * (1 - float64(rank-1)/float64(totalPlayersWithScore))
+	return math.Max(0, 100*(1-float64(rank-1)/float64(totalPlayersWithScore)))
 }
 
 func GetWeight(totalPlayers int, submittedScores int) float64 {
