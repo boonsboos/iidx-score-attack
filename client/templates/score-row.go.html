@@ -2,17 +2,19 @@
 <tr>
   <td>
     <div>{{ .Player.DJName }}</div>
-    <div class="{{ danColor .Player.SPDanLevel }}">
-      <abbr title="Dan Level: {{ danStringLatin .Player.SPDanLevel }}">
-        {{ danString .Player.SPDanLevel }}
+    <div class="{{ danColor .Player.DanLevel }}">
+      <abbr title="Dan Level: {{ danStringLatin .Player.DanLevel }}">
+        {{ danString .Player.DanLevel }}
       </abbr>
     </div>
   </td>
-  <td>{{ .Rating }}</td>
+  <td style="color: hsl({{ .Rating }}deg, 50%, 50%) !important;">
+    {{ ratingFormat .Rating }}
+  </td>
   {{ range .Scores }}
   <td data-sort="{{.ExScore}}">
     <abbr title="Last played: {{ .Timestamp }}">
-      <div>{{ .ExScore }} EX</div>
+      <div>{{ .ExScore }} EX <span class="fw-bold">{{ .Rank }}</span></div>
       <div>{{ .ScoreRate }} | {{ .Misscount }} BP</div>
       <div>
         <span style="color: hsl({{ .Rating }}deg, 50%, 50%) !important;"

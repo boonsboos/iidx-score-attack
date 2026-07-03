@@ -237,6 +237,7 @@ func CalculatePerChartRating(charts []models.BracketChart, PlayerScores map[mode
 				ChartId:   chartId,
 				ExScore:   chartScore.Score.Ex,
 				ScoreRate: fmt.Sprintf("%.2f%%", (float64(chartScore.Score.Ex)/float64(chartsById[chartId].Chart.MaxScore.Int32))*100),
+				Rank:      chartsById[chartId].Chart.GetRank(chartScore.Score.Ex),
 				Rating:    GetRating(rank+1, totalPlayersWithScore),
 				Misscount: chartScore.Score.Misscount,
 				Lamp:      chartScore.Score.Lamp,

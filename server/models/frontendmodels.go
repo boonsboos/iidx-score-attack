@@ -16,6 +16,7 @@ type FrontendPlayerScore struct {
 	ExScore int `json:"ex_score"`
 	// % of max score
 	ScoreRate string  `json:"score_rate"`
+	Rank      string  `json:"rank"` // B, A, AA, AAA, MAX-
 	Misscount int     `json:"misscount"`
 	Lamp      int     `json:"lamp"`
 	Rating    float64 `json:"rating"`

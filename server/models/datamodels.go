@@ -138,3 +138,31 @@ var DanStringsLatin = map[int]string{
 	17: "Chuuden",
 	18: "Kaiden",
 }
+
+func (chart Chart) GetRank(exScore int) string {
+	score := float64(exScore)
+
+	if max := float64(chart.MaxScore.Int32); chart.MaxScore.Valid {
+		switch {
+		case score >= (max * 0.9444):
+			return "MAX-"
+		case score >= (max * 0.8889):
+			return "AAA"
+		case score >= (max * 0.7778):
+			return "AA"
+		case score >= (max * 0.6667):
+			return "A"
+		case score >= (max * 0.5556):
+			return "B"
+		case score >= (max * 0.4444):
+			return "C"
+		case score >= (max * 0.3333):
+			return "D"
+		case score >= (max * 0.2222):
+			return "E"
+		default:
+			return "F"
+		}
+	}
+	return "F"
+}
