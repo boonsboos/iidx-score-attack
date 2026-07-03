@@ -254,6 +254,12 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 	// they do, the new score is higher or misscount is lower, update the existing score entry
 	if existingScore.Ex < score.ExScore || existingScore.Misscount > score.MissCount || existingScore.Lamp < score.Lamp {
 		log.Println("Updating score for player", player.GameID, "on bracket chart", matchingBracketChart.ID, "with new score", score.ExScore)
+
+		// ignore people quitting out (DEATH = -1 bp) by keeping their existing misscount
+		if score.MissCount == -1 {
+			score.MissCount = existingScore.Misscount
+		}
+
 		gorm.G[models.Score](db.DB).
 			Where("player_id = ? AND bracket_chart_id = ?", player.ID, matchingBracketChart.ID).
 			Updates(db.DefaultTimeout(), models.Score{
