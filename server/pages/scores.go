@@ -113,15 +113,11 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 		return []models.ScorePagePlayerScore{}
 	}
 
-	PlayerIds := lo.KeyBy(players, func(player models.Player) uint {
-		return player.ID
-	})
-
 	PlayerScores := make(map[models.Player][]models.Score)
 
 	// group scores by player
 	lo.ForEach(scores, func(score models.Score, i int) {
-		PlayerScores[PlayerIds[score.Player.ID]] = append(PlayerScores[PlayerIds[score.Player.ID]], score)
+		PlayerScores[score.Player] = append(PlayerScores[score.Player], score)
 	})
 
 	// make sure that each player has a score for each chart, if not, add a score with 0 ex and 0 misscount so that the table can be filled correctly
@@ -142,6 +138,21 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 		PlayerScores[player] = playerScores
 	})
 
+	chartsById := lo.Map(charts, func(chart models.BracketChart, index int) uint {
+		return chart.ID
+	})
+
+	// sort playerScore by chartId in the order of BracketCharts to match the order of charts in the frontend
+	for _, scores := range PlayerScores {
+		sort.SliceStable(scores, func(i, j int) bool {
+			chartIdI := scores[i].BracketChartID
+			chartIdJ := scores[j].BracketChartID
+			chartIndexI := lo.IndexOf(chartsById, chartIdI)
+			chartIndexJ := lo.IndexOf(chartsById, chartIdJ)
+			return chartIndexI < chartIndexJ
+		})
+	}
+
 	frontendPlayerScores := CalculatePerChartRating(charts, PlayerScores)
 
 	var frontendPlayerScoreList []models.ScorePagePlayerScore = make([]models.ScorePagePlayerScore, 0)
@@ -152,21 +163,6 @@ func GetBracketScores(charts []models.BracketChart) []models.ScorePagePlayerScor
 			Player: player,
 			Rating: -1, // needs more calculation
 			Scores: scores,
-		})
-	}
-
-	chartsById := lo.Map(charts, func(chart models.BracketChart, index int) uint {
-		return chart.ID
-	})
-
-	// sort playerScore by chartId in the order of BracketCharts to match the order of charts in the frontend
-	for _, playerScore := range frontendPlayerScoreList {
-		sort.SliceStable(playerScore.Scores, func(i, j int) bool {
-			chartIdI := playerScore.Scores[i].ChartId
-			chartIdJ := playerScore.Scores[j].ChartId
-			chartIndexI := lo.IndexOf(chartsById, chartIdI)
-			chartIndexJ := lo.IndexOf(chartsById, chartIdJ)
-			return chartIndexI < chartIndexJ
 		})
 	}
 
@@ -228,6 +224,10 @@ func CalculatePerChartRating(charts []models.BracketChart, PlayerScores map[mode
 				Score:  score,
 			})
 		}
+
+		sort.SliceStable(scores, func(i, j int) bool {
+			return scores[i].Ex > scores[j].Ex
+		})
 	}
 
 	var frontendPlayerScores map[models.Player][]models.FrontendPlayerScore = make(map[models.Player][]models.FrontendPlayerScore, 0)
@@ -294,6 +294,7 @@ func GetBracketPlayersScores(charts []models.BracketChart) ([]models.Player, []m
 		log.Println("Error occurred while fetching players for bracket charts: ", err)
 	}
 
+	// need to map because uniq returns source type
 	return lo.UniqBy(lo.Map(scores, func(score models.Score, i int) models.Player {
 		return score.Player
 	}), func(player models.Player) uint {
