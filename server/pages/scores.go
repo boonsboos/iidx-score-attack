@@ -26,6 +26,7 @@ func ScoresLower(context *gin.Context) {
 	})
 
 	context.HTML(200, "scores.html", gin.H{
+		"BracketTitle": "Lower Bracket",
 		"BracketCharts": lo.Map(lowerBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
 			return models.ScorePageBracketChart{
 				Title:          chart.Chart.Song.Name,
@@ -53,6 +54,7 @@ func ScoresUpper(context *gin.Context) {
 	})
 
 	context.HTML(200, "scores.html", gin.H{
+		"BracketTitle": "Upper Bracket",
 		"BracketCharts": lo.Map(upperBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
 			return models.ScorePageBracketChart{
 				Title:          chart.Chart.Song.Name,
@@ -80,6 +82,7 @@ func ScoresMaster(context *gin.Context) {
 	})
 
 	context.HTML(200, "scores.html", gin.H{
+		"BracketTitle": "Master Bracket",
 		"BracketCharts": lo.Map(masterBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
 			return models.ScorePageBracketChart{
 				Title:          chart.Chart.Song.Name,

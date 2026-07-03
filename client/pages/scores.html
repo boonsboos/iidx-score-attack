@@ -31,7 +31,7 @@
 
       <hr />
 
-      <h2>Scores</h2>
+      <h2>{{ .BracketTitle }} Scores</h2>
       
       {{ if and (gt (len .BracketCharts) 0) (gt (len .Bracket) 0) }}
         <table
