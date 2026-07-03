@@ -22,8 +22,8 @@ func ScoresLower(context *gin.Context) {
 	lowerBracket := GetBracketScores(lowerBracketCharts)
 
 	// ensure players with higher average rating are sorted for first
-	sort.Slice(lowerBracket, func(i, j int) bool {
-		return lowerBracket[i].Rating < lowerBracket[j].Rating
+	sort.SliceStable(lowerBracket, func(i, j int) bool {
+		return lowerBracket[i].Rating > lowerBracket[j].Rating
 	})
 
 	context.HTML(200, "scores.html", gin.H{
@@ -50,8 +50,8 @@ func ScoresUpper(context *gin.Context) {
 	upperBracket := GetBracketScores(upperBracketCharts)
 
 	// ensure players with higher average rating are sorted for first
-	sort.Slice(upperBracket, func(i, j int) bool {
-		return upperBracket[i].Rating < upperBracket[j].Rating
+	sort.SliceStable(upperBracket, func(i, j int) bool {
+		return upperBracket[i].Rating > upperBracket[j].Rating
 	})
 
 	context.HTML(200, "scores.html", gin.H{
