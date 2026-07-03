@@ -4,6 +4,7 @@ import (
 	"errors"
 	"log"
 	"math"
+	"sort"
 	"sync"
 	"time"
 
@@ -149,22 +150,18 @@ func playerJob(player models.Player, activeBracketCharts []models.BracketChart) 
 		}
 	}
 
-	log.Println("Fetched last", len(scores), "scores for player", player.GameID)
-
-	var scoresSinceLastCycle = lo.Filter(scores, func(score models.FScore, index int) bool {
-		return score.Timestamp.After(workerStartTimer.Add(-time.Duration(config.ServerConfig.WorkerInterval)))
+	// process oldest scores first
+	sort.Slice(scores, func(i, j int) bool {
+		return scores[i].Timestamp.Before(scores[j].Timestamp)
 	})
 
-	if len(scoresSinceLastCycle) == 0 {
-		log.Println("No new scores to process for player", player.GameID)
-		return
-	}
+	log.Println("Fetched last", len(scores), "scores for player", player.GameID)
 
-	log.Println("Found", len(scoresSinceLastCycle), "scores since last cycle for player", player.GameID)
-
-	for _, score := range scoresSinceLastCycle {
-		analyzeScore(activeBracketCharts, score, player)
+	var updatedScores int
+	for _, score := range scores {
+		updatedScores += analyzeScore(activeBracketCharts, score, player)
 	}
+	log.Println("Updated", updatedScores, "scores for player", player.GameID)
 }
 
 func retryFetchingProfile(player models.Player) (models.FPlayer, bool) {
@@ -211,7 +208,7 @@ func retryFetchingScores(player models.Player) ([]models.FScore, bool) {
 	}
 }
 
-func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore, player models.Player) {
+func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore, player models.Player) int {
 	// find the bracket chart that matches this score
 	matchingBracketChart, found := lo.Find(activeBracketCharts, func(bracketChart models.BracketChart) bool {
 		return bracketChart.Chart.Difficulty == string(score.Difficulty[0]) &&
@@ -219,12 +216,12 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 			bracketChart.Chart.SongId == uint(score.SongId)
 	})
 	if !found {
-		return
+		return 0
 	}
 
 	playingInCorrectBracket := checkPlayerPlayingInCorrectBracket(player, matchingBracketChart, activeBracketCharts)
 	if !playingInCorrectBracket {
-		return
+		return 0
 	}
 
 	log.Println("Processing score for player", player.GameID, "on chart", score.SongId, score.Difficulty)
@@ -234,23 +231,24 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 		Where("player_id = ? AND bracket_chart_id = ?", player.ID, matchingBracketChart.ID).
 		First(db.DefaultTimeout())
 
-	// they do not, create a new score entry
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		log.Println("Updating score for player", player.GameID, "on bracket chart", matchingBracketChart.ID, "with new score", score.ExScore)
-		gorm.G[models.Score](db.DB).
-			Create(db.DefaultTimeout(), &models.Score{
-				PlayerID:       player.ID,
-				BracketChartID: matchingBracketChart.ID,
-				Ex:             score.ExScore,
-				Misscount:      score.MissCount,
-				Timestamp:      score.Timestamp,
-			})
-		return
-	}
-
 	if err != nil {
+		// they do not, create a new score entry
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			log.Println("Updating score for player", player.GameID, "on bracket chart", matchingBracketChart.ID, "with new score", score.ExScore)
+			gorm.G[models.Score](db.DB).
+				Create(db.DefaultTimeout(), &models.Score{
+					PlayerID:       player.ID,
+					BracketChartID: matchingBracketChart.ID,
+					Ex:             score.ExScore,
+					Misscount:      score.MissCount,
+					Lamp:           score.Lamp,
+					Timestamp:      score.Timestamp,
+				})
+			return 1
+		}
+
 		log.Println("Error occurred while fetching existing score for player", player.GameID, "on bracket chart", matchingBracketChart.ID, ":", err)
-		return
+		return 0
 	}
 
 	// they do, the new score is higher or misscount is lower, update the existing score entry
@@ -267,6 +265,7 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 				Timestamp: score.Timestamp,
 			})
 	}
+	return 1
 }
 
 // ban players that are 7 dan or higher from submitting scores to the lower bracket
