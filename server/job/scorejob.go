@@ -285,8 +285,10 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 				Lamp:      int(math.Max(float64(score.Lamp), float64(existingScore.Lamp))),
 				Timestamp: score.Timestamp,
 			})
+
+		return 1
 	}
-	return 1
+	return 0
 }
 
 // ban players that are 7 dan or higher from submitting scores to the lower bracket
@@ -296,7 +298,10 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
 	if player.DanLevel >= 13 && matchingBracketChart.BracketType == "lower" {
 		existingScores, err := gorm.G[models.Score](db.DB).
-			Where("player_id = ? AND bracket_chart_id in ?", player.ID, lo.Map(activeBracketCharts, func(chart models.BracketChart, idx int) uint { return chart.ID })).
+			Where("player_id = ? AND bracket_chart_id in ?", player.ID,
+				lo.FilterMap(activeBracketCharts, func(chart models.BracketChart, idx int) (uint, bool) {
+					return chart.ID, chart.BracketType == "lower"
+				})).
 			Count(db.DefaultTimeout(), "*")
 
 		if err != nil {
@@ -315,7 +320,10 @@ func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketCha
 
 	if player.DanLevel == 18 && matchingBracketChart.BracketType == "upper" {
 		existingScores, err := gorm.G[models.Score](db.DB).
-			Where("player_id = ? AND bracket_chart_id in ?", player.ID, lo.Map(activeBracketCharts, func(chart models.BracketChart, idx int) uint { return chart.ID })).
+			Where("player_id = ? AND bracket_chart_id in ?", player.ID,
+				lo.FilterMap(activeBracketCharts, func(chart models.BracketChart, idx int) (uint, bool) {
+					return chart.ID, chart.BracketType == "upper"
+				})).
 			Count(db.DefaultTimeout(), "*")
 
 		if err != nil {
