@@ -126,7 +126,13 @@ func playerJob(player models.Player, activeBracketCharts []models.BracketChart) 
 
 	// update the profile if it has changed
 	if profile.SPDanLevel > player.DanLevel || profile.DJName != player.DJName {
-		log.Println("Updating player", player.GameID, "with new profile data")
+		if profile.SPDanLevel > player.DanLevel {
+			log.Println("Player", player.GameID, "has leveled up from", models.DanStringsLatin[player.DanLevel], "to", models.DanStringsLatin[profile.SPDanLevel])
+		}
+
+		if profile.DJName != player.DJName {
+			log.Println("Player", player.GameID, "has changed their DJ name")
+		}
 
 		err := db.DB.Model(&player).UpdateColumns(models.Player{
 			DJName:   profile.DJName,
