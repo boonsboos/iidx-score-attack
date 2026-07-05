@@ -307,7 +307,7 @@ func analyzeScore(activeBracketCharts []models.BracketChart, score models.FScore
 // ban players that are kaiden or higher from submitting scores to the lower and upper bracket
 // unless they already have scores in the bracket (e.g. they were chuuden when they submitted earlier scores, and then made it to kaiden)
 func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
-	if player.DanLevel >= 13 && matchingBracketChart.BracketType == "lower" {
+	if player.DanLevel >= 12 && matchingBracketChart.BracketType == "lower" {
 		existingScores, err := gorm.G[models.Score](db.DB).
 			Where("player_id = ? AND bracket_chart_id in ?", player.ID,
 				lo.FilterMap(activeBracketCharts, func(chart models.BracketChart, idx int) (uint, bool) {
@@ -317,19 +317,19 @@ func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketCha
 
 		if err != nil {
 			// TODO: notify maintainer
-			log.Println("Failed to determine if a recently 7dan+ player has a score in the lower bracket", err)
+			log.Println("Failed to determine if a recently 6dan+ player has a score in the lower bracket", err)
 			return false
 		}
 
 		if existingScores == 0 {
-			log.Println("Player", player.GameID, "is 7 dan+ and submitted a score to the lower bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
+			log.Println("Player", player.GameID, "is 6dan+ and submitted a score to the lower bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
 			return false
 		}
 
-		log.Println("Player", player.GameID, "is 7 dan+ and already has scores in the lower bracket chart", matchingBracketChart.ID, "so we will allow them to keep participating in the lower bracket.")
+		log.Println("Player", player.GameID, "is 6dan+ and already has scores in the lower bracket chart", matchingBracketChart.ID, "so we will allow them to keep participating in the lower bracket.")
 	}
 
-	if player.DanLevel == 18 && matchingBracketChart.BracketType == "upper" {
+	if player.DanLevel >= 15 && matchingBracketChart.BracketType == "upper" {
 		existingScores, err := gorm.G[models.Score](db.DB).
 			Where("player_id = ? AND bracket_chart_id in ?", player.ID,
 				lo.FilterMap(activeBracketCharts, func(chart models.BracketChart, idx int) (uint, bool) {
@@ -339,16 +339,16 @@ func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketCha
 
 		if err != nil {
 			// TODO: notify maintainer
-			log.Println("Failed to determine if a recently kaiden player has a score in the upper bracket", err)
+			log.Println("Failed to determine if a recently 9dan+ player has a score in the upper bracket", err)
 			return false
 		}
 
 		if existingScores == 0 {
-			log.Println("Player", player.GameID, "is kaiden and submitted a score to upper bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
+			log.Println("Player", player.GameID, "is 9dan+ and submitted a score to upper bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
 			return false
 		}
 
-		log.Println("Player", player.GameID, "is kaiden and already has scores in the upper bracket so we will allow them to keep participating in the upper bracket.")
+		log.Println("Player", player.GameID, "is 9dan+ and already has scores in the upper bracket so we will allow them to keep participating in the upper bracket.")
 	}
 
 	return true
