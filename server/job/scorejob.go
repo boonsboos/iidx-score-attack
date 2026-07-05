@@ -128,10 +128,13 @@ func playerJob(player models.Player, activeBracketCharts []models.BracketChart) 
 	if profile.SPDanLevel > player.DanLevel || profile.DJName != player.DJName {
 		log.Println("Updating player", player.GameID, "with new profile data")
 		_, err := gorm.G[models.Player](db.DB).Where("id = ?", player.ID).Updates(db.DefaultTimeout(), models.Player{
-			DJName:   profile.DJName,
-			DanLevel: profile.SPDanLevel,
+			DJName: profile.DJName,
+			// churns, but the BeforeUpdate hook requires the refresh token to be set
+			RefreshToken: player.RefreshToken,
+			DanLevel:     profile.SPDanLevel,
 		})
 		if err != nil {
+			// TODO: notify maintainer
 			log.Println("Error occurred while updating player profile for player", player.GameID, ":", err)
 		}
 	}
