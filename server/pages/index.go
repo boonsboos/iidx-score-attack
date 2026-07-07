@@ -36,9 +36,13 @@ func Index(context *gin.Context) {
 	}
 
 	context.HTML(http.StatusOK, "index.html", gin.H{
+		"FAuthURI":     config.ServerConfig.GetApiConfigByName("F").AuthBaseUrl,
+		"FClientId":    config.ServerConfig.GetApiConfigByName("F").ClientId,
+		"FRedirectURI": config.ServerConfig.GetApiConfigByName("F").OauthRedirectUrl,
+		"KAuthURI":     config.ServerConfig.GetApiConfigByName("K").AuthBaseUrl,
+		"KClientId":    config.ServerConfig.GetApiConfigByName("K").ClientId,
+
 		"BracketActive":       activeChartPool.ID != 0,
-		"ClientId":            config.ServerConfig.OauthClientId,
-		"RedirectURI":         config.ServerConfig.OauthRedirectUrl,
 		"PoolName":            activeChartPool.Title,
 		"StartTime":           activeChartPool.ActiveFrom.Format("02-01-2006"),  // for the bracket countdown timer
 		"EndTime":             activeChartPool.ActiveUntil.Format("02-01-2006"), // for the bracket countdown timer

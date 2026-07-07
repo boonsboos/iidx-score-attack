@@ -16,14 +16,14 @@ import (
 	"iidx.boonsboos.nl/server/models"
 )
 
-type tokenData struct {
+type fTokenData struct {
 	AccessToken  string `json:"access_token"`
 	TokenType    string `json:"token_type"`
 	ExpiresIn    int    `json:"expires_in"`
 	RefreshToken string `json:"refresh_token"`
 }
 
-func HandleOauthCallback(context *gin.Context) {
+func HandleFOauthCallback(context *gin.Context) {
 
 	code := context.Query("code")
 	if code == "" {
@@ -31,7 +31,7 @@ func HandleOauthCallback(context *gin.Context) {
 		return
 	}
 
-	tokenData, err := requestToken(code)
+	tokenData, err := requestFToken(code)
 	if err != nil {
 		context.JSON(500, gin.H{"error": "Error occurred while fetching token"})
 		return
@@ -40,7 +40,7 @@ func HandleOauthCallback(context *gin.Context) {
 	// after getting the token, we should identify the user by making a request to the API with the access token
 	// only then we can store the refresh token
 
-	iidxProfile, err := GetIIDXProfile(tokenData.AccessToken)
+	iidxProfile, err := FGetIIDXProfile(tokenData.AccessToken)
 	if err != nil {
 		context.JSON(500, gin.H{"error": "Error occurred while fetching IIDX profile"})
 		return
@@ -54,6 +54,7 @@ func HandleOauthCallback(context *gin.Context) {
 		DJName:       iidxProfile.DJName,
 		DanLevel:     iidxProfile.SPDanLevel,
 		RefreshToken: sql.NullString{String: tokenData.RefreshToken, Valid: true},
+		Server:       "F",
 	}
 
 	db.DB.Clauses(clause.OnConflict{
@@ -63,20 +64,20 @@ func HandleOauthCallback(context *gin.Context) {
 	context.Redirect(302, "/success?dj_name="+iidxProfile.DJName)
 }
 
-func requestToken(code string) (tokenData, error) {
+func requestFToken(code string) (fTokenData, error) {
 	queryParams := url.Values{}
 	queryParams.Set("grant_type", "authorization_code")
 	queryParams.Set("code", code)
-	queryParams.Set("redirect_uri", config.ServerConfig.OauthRedirectUrl)
-	queryParams.Set("client_id", config.ServerConfig.OauthClientId)
-	queryParams.Set("client_secret", config.ServerConfig.OauthSecret)
+	queryParams.Set("redirect_uri", config.ServerConfig.GetApiConfigByName("F").OauthRedirectUrl)
+	queryParams.Set("client_id", config.ServerConfig.GetApiConfigByName("F").ClientId)
+	queryParams.Set("client_secret", config.ServerConfig.GetApiConfigByName("F").Secret)
 
 	queryString := queryParams.Encode()
 
-	response, err := http.Post(config.ServerConfig.ApiBaseUrl+"/oauth/token", "application/x-www-form-urlencoded", strings.NewReader(queryString))
+	response, err := http.Post(config.ServerConfig.GetApiConfigByName("F").ApiBaseUrl+"/oauth/token", "application/x-www-form-urlencoded", strings.NewReader(queryString))
 	if err != nil {
 		log.Println("Error occurred while fetching token: ", err)
-		return tokenData{}, err
+		return fTokenData{}, err
 	}
 
 	defer response.Body.Close()
@@ -84,15 +85,15 @@ func requestToken(code string) (tokenData, error) {
 	tokenResponse, err := io.ReadAll(response.Body)
 	if err != nil || response.StatusCode != 200 {
 		log.Println("Error occurred while reading token response: ", tokenResponse, " | Status Code: ", response.StatusCode)
-		return tokenData{}, err
+		return fTokenData{}, err
 	}
 
 	// unmarshal the token response into a struct
-	var data tokenData
+	var data fTokenData
 	err = json.Unmarshal(tokenResponse, &data)
 	if err != nil {
 		log.Println("Error occurred while unmarshaling token response: ", err)
-		return tokenData{}, err
+		return fTokenData{}, err
 	}
 
 	return data, nil

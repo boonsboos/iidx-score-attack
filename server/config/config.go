@@ -10,16 +10,21 @@ import (
 var ServerConfig Config
 
 type Config struct {
-	ApiBaseUrl       string
-	OauthBaseUrl     string
-	OauthClientId    string
-	OauthRedirectUrl string
-	OauthSecret      string
+	Apis             []ApiConfig
 	Port             int
 	ConnectionString string
 	AdminKey         string
 	WorkerInterval   int
 	EncryptionKey    string
+}
+
+type ApiConfig struct {
+	ApiBaseUrl       string
+	AuthBaseUrl      string
+	ClientId         string
+	Secret           string
+	Name             string
+	OauthRedirectUrl string
 }
 
 func InitConfig() {
@@ -46,4 +51,13 @@ func InitConfig() {
 	}
 
 	log.Println("Loading config OK")
+}
+
+func (c Config) GetApiConfigByName(name string) *ApiConfig {
+	for _, apiConfig := range c.Apis {
+		if apiConfig.Name == name {
+			return &apiConfig
+		}
+	}
+	return nil
 }

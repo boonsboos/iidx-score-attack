@@ -12,6 +12,7 @@ type Player struct {
 	DJName       string         `json:"name"`
 	DanLevel     int            `json:"dan_level"`                            // 7k = 0, 1d = 7, ... 10d = 16, chuuden = 17, kaiden = 18
 	RefreshToken sql.NullString `json:"refresh_token" gorm:"index,size:1024"` // can only be nil or "" if the user revoked access to us and we already tried to make a refresh request that failed.
+	Server       string         `json:"server"`                               // "F" or "K"
 }
 
 // the pool of charts that are currently active for a score attack event
@@ -137,6 +138,28 @@ var DanStringsLatin = map[int]string{
 	16: "10th dan",
 	17: "Chuuden",
 	18: "Kaiden",
+}
+
+var KDanStrings = map[string]int{
+	"KYU_7":   0,
+	"KYU_6":   1,
+	"KYU_5":   2,
+	"KYU_4":   3,
+	"KYU_3":   4,
+	"KYU_2":   5,
+	"KYU_1":   6,
+	"DAN_1":   7,
+	"DAN_2":   8,
+	"DAN_3":   9,
+	"DAN_4":   10,
+	"DAN_5":   11,
+	"DAN_6":   12,
+	"DAN_7":   13,
+	"DAN_8":   14,
+	"DAN_9":   15,
+	"DAN_10":  16,
+	"CHUUDEN": 17,
+	"KAIDEN":  18,
 }
 
 func (chart Chart) GetRank(exScore int) string {

@@ -37,14 +37,15 @@
           <div class="card-body">
             <h5 class="card-title">Sign up</h5>
             <p class="card-text">
-              Log in with your Flower account to participate. Your
-              scores will be updated every 10 minutes.
+              Log in with your Flower or Kamaitachi account to participate.
+              Your scores will be updated every 10 minutes.
             </p>
             <a
-              href="https://kailua.projectflower.eu/oauth/authorize?client_id={{ .ClientId }}&response_type=code&redirect_uri={{ .RedirectURI }}&scope=settings_read"
+              href="{{ .FAuthURI }}?client_id={{ .FClientId }}&response_type=code&redirect_uri={{ .FRedirectURI }}&scope=settings_read"
               class="btn btn-primary"
               ><abbr title="flower">🌸</abbr> Sign up</a
             >
+            <a href="{{ .KAuthURI }}?clientID={{ .KClientId }}" class="btn btn-danger"><abbr class="fw-bold" title="kamaitachi">KT</abbr> Sign up</a>
           </div>
         </div>
 

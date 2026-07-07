@@ -14,8 +14,10 @@ import (
 	"iidx.boonsboos.nl/server/models"
 )
 
-func RefreshAuth(player models.Player) (string, error) {
-	tokenData, err := refreshToken(player.RefreshToken.String)
+// only required for F server
+
+func RefreshFAuth(player models.Player) (string, error) {
+	tokenData, err := refreshFToken(player.RefreshToken.String)
 	if err != nil {
 		log.Println("Error occurred while refreshing auth: ", err)
 
@@ -32,25 +34,25 @@ func RefreshAuth(player models.Player) (string, error) {
 	}
 }
 
-func refreshToken(refreshToken string) (tokenData, error) {
+func refreshFToken(refreshToken string) (fTokenData, error) {
 	queryParams := url.Values{}
 	queryParams.Set("grant_type", "refresh_token")
 	queryParams.Set("refresh_token", refreshToken)
-	queryParams.Set("redirect_uri", config.ServerConfig.OauthRedirectUrl)
-	queryParams.Set("client_id", config.ServerConfig.OauthClientId)
-	queryParams.Set("client_secret", config.ServerConfig.OauthSecret)
+	queryParams.Set("redirect_uri", config.ServerConfig.GetApiConfigByName("F").OauthRedirectUrl)
+	queryParams.Set("client_id", config.ServerConfig.GetApiConfigByName("F").ClientId)
+	queryParams.Set("client_secret", config.ServerConfig.GetApiConfigByName("F").Secret)
 
 	queryString := queryParams.Encode()
 
-	response, err := http.Post(config.ServerConfig.ApiBaseUrl+"/oauth/token", "application/x-www-form-urlencoded", strings.NewReader(queryString))
+	response, err := http.Post(config.ServerConfig.GetApiConfigByName("F").ApiBaseUrl+"/oauth/token", "application/x-www-form-urlencoded", strings.NewReader(queryString))
 	if err != nil {
 		log.Println("Error occurred while fetching token: ", err)
-		return tokenData{}, err
+		return fTokenData{}, err
 	}
 
 	if response.StatusCode != 200 {
 		log.Println("Error occurred while refreshing token => Status Code: ", response.StatusCode)
-		return tokenData{}, err
+		return fTokenData{}, err
 	}
 
 	defer response.Body.Close()
@@ -58,15 +60,15 @@ func refreshToken(refreshToken string) (tokenData, error) {
 	tokenResponse, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Println("Error occurred while reading token response: ", tokenResponse, " | Status Code: ", response.StatusCode)
-		return tokenData{}, err
+		return fTokenData{}, err
 	}
 
 	// unmarshal the token response into a struct
-	var data tokenData
+	var data fTokenData
 	err = json.Unmarshal(tokenResponse, &data)
 	if err != nil {
 		log.Println("Error occurred while unmarshaling token response: ", err)
-		return tokenData{}, err
+		return fTokenData{}, err
 	}
 
 	return data, nil
