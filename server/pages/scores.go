@@ -228,6 +228,18 @@ func CalculatePerChartRating(charts []models.BracketChart, PlayerScores map[mode
 
 	for _, chartScores := range Placements {
 		sort.SliceStable(chartScores, func(i, j int) bool {
+			// tiebreaker: misscount
+			if chartScores[i].Score.Ex == chartScores[j].Score.Ex {
+				// tiebreaker: timestamp
+				if chartScores[i].Score.Misscount == chartScores[j].Score.Misscount {
+					// earlier score is better
+					return chartScores[i].Score.Timestamp.Before(chartScores[j].Score.Timestamp)
+				}
+
+				// lower misscount is better
+				return chartScores[i].Score.Misscount < chartScores[j].Score.Misscount
+			}
+
 			return chartScores[i].Score.Ex > chartScores[j].Score.Ex
 		})
 	}
