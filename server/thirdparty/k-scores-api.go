@@ -28,12 +28,12 @@ func KGetIIDXScores(userId int, authToken string) ([]models.KChartScore, error) 
 		return []models.KChartScore{}, err
 	}
 
+	defer response.Body.Close()
+
 	if response.StatusCode != 200 {
 		log.Println("Error occurred while fetching play history => Status Code:", response.StatusCode)
 		return []models.KChartScore{}, &UnauthorizedError{}
 	}
-
-	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
@@ -145,6 +145,8 @@ func getKUserProfile(accessToken string) (models.KUser, error) {
 		return models.KUser{}, err
 	}
 
+	defer response.Body.Close()
+
 	if response.StatusCode != 200 {
 		log.Println("Error occurred while fetching K profile => Status Code:", response.StatusCode)
 
@@ -154,8 +156,6 @@ func getKUserProfile(accessToken string) (models.KUser, error) {
 
 		return models.KUser{}, errors.New(strconv.Itoa(response.StatusCode))
 	}
-
-	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {

@@ -2,7 +2,7 @@
   "Port": 8080,
   "Apis": [
     {
-      "Name": "ExampleApi",
+      "Name": "K",
       "ApiBaseUrl": "https://example.com/api",
       "AuthBaseUrl": "https://example.com/api",
       "ClientId": "1234",
@@ -10,7 +10,7 @@
       "OauthRedirectUrl": "http://localhost:8080/oauth/callback"
     },
     {
-      "Name": "ExampleApi2",
+      "Name": "F",
       "ApiBaseUrl": "https://example.com/api",
       "AuthBaseUrl": "https://example.com/api",
       "ClientId": "1234567",

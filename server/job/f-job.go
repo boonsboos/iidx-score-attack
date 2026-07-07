@@ -186,7 +186,9 @@ func analyzeFScore(activeBracketCharts []models.BracketChart, score models.FScor
 
 	// they do, the new score is higher or misscount is lower, update the existing score entry
 	if existingScore.Ex < score.ExScore || existingScore.Misscount > score.MissCount || existingScore.Lamp < score.Lamp {
-		log.Println("Updating score for", player.Server, "player", player.GameID, "on bracket chart", matchingBracketChart.ID, "with new score", score.ExScore)
+		log.Println("Updating score for", player.Server, "player", player.GameID, "on bracket chart",
+			matchingBracketChart.ID, "with new score", score.ExScore, "ex,", score.MissCount, "bp",
+			models.LampStrings[score.Lamp])
 
 		// ignore people quitting out (DEATH = -1 bp) by keeping their existing misscount
 		if score.MissCount == -1 {

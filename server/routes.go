@@ -28,6 +28,10 @@ func RegisterRoutes(router *gin.Engine) {
 	router.GET("/scores/bracket/:id", pages.BracketSelect)
 	router.GET("/privacy-policy", pages.CookiePrivacy)
 
+	// alias until deployments are updated
+	router.POST("/oauth/callback", thirdparty.HandleFOauthCallback)
+	router.GET("/oauth/callback", thirdparty.HandleFOauthCallback)
+
 	router.POST("/oauth/callback-f", thirdparty.HandleFOauthCallback)
 	router.GET("/oauth/callback-f", thirdparty.HandleFOauthCallback)
 	router.POST("/oauth/callback-k", thirdparty.HandleKOauthCallback)

@@ -59,5 +59,6 @@ func (c Config) GetApiConfigByName(name string) *ApiConfig {
 			return &apiConfig
 		}
 	}
+	log.Panicln("No config for server", name)
 	return nil
 }

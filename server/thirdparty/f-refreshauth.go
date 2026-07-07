@@ -50,12 +50,12 @@ func refreshFToken(refreshToken string) (fTokenData, error) {
 		return fTokenData{}, err
 	}
 
+	defer response.Body.Close()
+
 	if response.StatusCode != 200 {
 		log.Println("Error occurred while refreshing token => Status Code: ", response.StatusCode)
-		return fTokenData{}, err
+		return fTokenData{}, &UnauthorizedError{}
 	}
-
-	defer response.Body.Close()
 
 	tokenResponse, err := io.ReadAll(response.Body)
 	if err != nil {

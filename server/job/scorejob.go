@@ -51,6 +51,9 @@ func workerJob() {
 					fPlayerJob(player, activeBracketCharts)
 				case "K":
 					kPlayerJob(player, activeBracketCharts)
+				default:
+					log.Println("Player with empty server!!!!", player.GameID, "Defaulting to F since it was added first.")
+					fPlayerJob(player, activeBracketCharts)
 				}
 
 				log.Println("Finished job for", player.Server, "player", player.GameID)
