@@ -10,8 +10,8 @@ import (
 	"iidx.boonsboos.nl/server/models"
 )
 
-func GetIIDXScores(authToken string) ([]models.FScore, error) {
-	request, err := http.NewRequest("GET", config.ServerConfig.ApiBaseUrl+"/api/iidx/v2/play_history", nil)
+func FGetIIDXScores(authToken string) ([]models.FScore, error) {
+	request, err := http.NewRequest("GET", config.ServerConfig.GetApiConfigByName("F").ApiBaseUrl+"/api/iidx/v2/play_history", nil)
 	if err != nil {
 		log.Println("Error occurred while creating request for play history: ", err)
 		return []models.FScore{}, err
@@ -50,8 +50,8 @@ func GetIIDXScores(authToken string) ([]models.FScore, error) {
 	return scoresResponse.Scores, nil
 }
 
-func GetIIDXProfile(accessToken string) (models.FPlayer, error) {
-	request, err := http.NewRequest("GET", config.ServerConfig.ApiBaseUrl+"/api/iidx/v2/player_profile", nil)
+func FGetIIDXProfile(accessToken string) (models.FPlayer, error) {
+	request, err := http.NewRequest("GET", config.ServerConfig.GetApiConfigByName("F").ApiBaseUrl+"/api/iidx/v2/player_profile", nil)
 	if err != nil {
 		log.Println("Error occurred while creating request: ", err)
 		return models.FPlayer{}, err
