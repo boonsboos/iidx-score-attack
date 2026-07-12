@@ -72,7 +72,7 @@ type KScoreRaw struct {
 			Lamp int `json:"lamp"`
 		} `json:"enumIndexes"`
 		Optional struct {
-			BP int `json:"bp"`
+			BP *int `json:"bp"`
 		} `json:"optional"`
 		Lamp string `json:"lamp"`
 	} `json:"scoreData"`
@@ -91,6 +91,12 @@ type KScore struct {
 }
 
 func (k KScoreRaw) Flatten() KScore {
+	// K sends fail scores with "bp": null so let's make it the same as an F score.
+	bp := -1
+	if k.ScoreData.Optional.BP != nil {
+		bp = *k.ScoreData.Optional.BP
+	}
+
 	return KScore{
 		ScoreId:      k.ScoreId,
 		ChartId:      k.ChartId,
@@ -98,7 +104,7 @@ func (k KScoreRaw) Flatten() KScore {
 		UserId:       k.UserId,
 		ExScore:      k.ScoreData.ExScore,
 		Lamp:         k.ScoreData.EnumIndexes.Lamp,
-		BP:           k.ScoreData.Optional.BP,
+		BP:           bp,
 	}
 }
 
