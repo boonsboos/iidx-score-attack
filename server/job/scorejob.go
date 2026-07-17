@@ -106,54 +106,67 @@ func prepareJob() ([]models.BracketChart, []models.Player, bool) {
 	return activeBracketCharts, players, true
 }
 
+func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
+
+	legacyBracketCheck := legacyCheck(player, matchingBracketChart, activeBracketCharts)
+	if !legacyBracketCheck {
+		return false
+	}
+
+	// 5th dan+ players are not allowed in beginner bracket (lv 3-5)
+	if player.DanLevel >= 11 && matchingBracketChart.BracketType == "beginner" {
+		genericBracketCheck("beginner", 11, player, matchingBracketChart, activeBracketCharts)
+	}
+
+	// 9th dan+ players are not allowed in normal bracket (lv 7-9)
+	if player.DanLevel >= 15 && matchingBracketChart.BracketType == "normal" {
+		genericBracketCheck("normal", 15, player, matchingBracketChart, activeBracketCharts)
+	}
+
+	// kaiden players are not allowed in hyper bracket (lv 10-12)
+	if player.DanLevel == 18 && matchingBracketChart.BracketType == "hyper" {
+		genericBracketCheck("hyper", 18, player, matchingBracketChart, activeBracketCharts)
+	}
+
+	return true
+}
+
 // ban players that are 6 dan or higher from submitting scores to the lower bracket
 // unless they already have scores in the bracket (e.g. they were 6 dan when they submitted earlier scores, and then made it to 7 dan)
 // ban players that are 9 dan or higher from submitting scores to the lower and upper bracket
 // unless they already have scores in the bracket (e.g. they were 8 dan when they submitted earlier scores, and then made it to 9 dan)
-func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
+func legacyCheck(player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
 	if player.DanLevel >= 12 && matchingBracketChart.BracketType == "lower" {
-		existingScores, err := gorm.G[models.Score](db.DB).
-			Where("player_id = ? AND bracket_chart_id in ?", player.ID,
-				lo.FilterMap(activeBracketCharts, func(chart models.BracketChart, idx int) (uint, bool) {
-					return chart.ID, chart.BracketType == "lower"
-				})).
-			Count(db.DefaultTimeout(), "*")
-
-		if err != nil {
-			// TODO: notify maintainer
-			log.Println(player.Server, "Player", player.GameID, "Failed to determine if a recently 6dan+ player has a score in the lower bracket", err)
-			return false
-		}
-
-		if existingScores == 0 {
-			log.Println(player.Server, "Player", player.GameID, "is 6dan+ and submitted a score to the lower bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
-			return false
-		}
-
-		log.Println(player.Server, "Player", player.GameID, "is 6dan+ and already has scores in the lower bracket chart", matchingBracketChart.ID, "so we will allow them to keep participating in the lower bracket.")
+		genericBracketCheck("lower", 12, player, matchingBracketChart, activeBracketCharts)
 	}
 
 	if player.DanLevel >= 15 && matchingBracketChart.BracketType == "upper" {
-		existingScores, err := gorm.G[models.Score](db.DB).
-			Where("player_id = ? AND bracket_chart_id in ?", player.ID,
-				lo.FilterMap(activeBracketCharts, func(chart models.BracketChart, idx int) (uint, bool) {
-					return chart.ID, chart.BracketType == "upper"
-				})).
-			Count(db.DefaultTimeout(), "*")
-
-		if err != nil {
-			// TODO: notify maintainer
-			log.Println("Failed to determine if a recently 9dan+ player has a score in the upper bracket", err)
-			return false
-		}
-
-		if existingScores == 0 {
-			log.Println(player.Server, "Player", player.GameID, "is 9dan+ and submitted a score to upper bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
-			return false
-		}
-
-		log.Println(player.Server, "Player", player.GameID, "is 9dan+ and already has scores in the upper bracket so we will allow them to keep participating in the upper bracket.")
+		genericBracketCheck("upper", 15, player, matchingBracketChart, activeBracketCharts)
 	}
+	return true
+}
+
+func genericBracketCheck(bracket string, threshold int, player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
+	existingScores, err := gorm.G[models.Score](db.DB).
+		Where("player_id = ? AND bracket_chart_id in ?",
+			player.ID,
+			lo.FilterMap(activeBracketCharts, func(chart models.BracketChart, idx int) (uint, bool) {
+				return chart.ID, chart.BracketType == bracket
+			})).
+		Count(db.DefaultTimeout(), "*")
+
+	if err != nil {
+		// TODO: notify maintainer
+		log.Println("Failed to determine if recently,", models.DanStringsLatin[threshold], "or better", player.Server, "player", player.GameID, "has a score in the", bracket, "bracket", err)
+		return false
+	}
+
+	if existingScores == 0 {
+		log.Println(player.Server, "Player", player.GameID, "is", models.DanStringsLatin[threshold], "or better and submitted a score to", bracket, "bracket chart", matchingBracketChart.ID, "which is not allowed. Ignoring score.")
+		return false
+	}
+
+	log.Println(player.Server, "Player", player.GameID, "is", models.DanStringsLatin[threshold], "or better and already has scores on", bracket, "bracket chart", matchingBracketChart.ID, "so they are allowed to keep participating in the", bracket, "bracket.")
 
 	return true
 }
