@@ -44,8 +44,8 @@ func Index(context *gin.Context) {
 
 		"BracketActive":       activeChartPool.ID != 0,
 		"PoolName":            activeChartPool.Title,
-		"StartTime":           activeChartPool.ActiveFrom.Format("02-01-2006"),  // for the bracket countdown timer
-		"EndTime":             activeChartPool.ActiveUntil.Format("02-01-2006"), // for the bracket countdown timer
+		"StartTime":           activeChartPool.ActiveFrom.Format("2006-01-02"),  // for the bracket countdown timer
+		"EndTime":             activeChartPool.ActiveUntil.Format("2006-01-02"), // for the bracket countdown timer
 		"MasterBracketCharts": masterBracketCharts,
 		"UpperBracketCharts":  upperBracketCharts,
 		"LowerBracketCharts":  lowerBracketCharts,

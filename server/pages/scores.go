@@ -6,6 +6,7 @@ import (
 	"math"
 	"sort"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -13,89 +14,6 @@ import (
 	"iidx.boonsboos.nl/server/db"
 	"iidx.boonsboos.nl/server/models"
 )
-
-func ScoresLower(context *gin.Context) {
-	lowerBracketCharts, err := GetBracketCharts("lower")
-	if err != nil {
-		log.Println("Error occurred while fetching lower bracket charts: ", err)
-	}
-
-	lowerBracket := GetBracketScores(lowerBracketCharts)
-
-	// ensure players with higher average rating are sorted for first
-	sort.SliceStable(lowerBracket, func(i, j int) bool {
-		return lowerBracket[i].Rating > lowerBracket[j].Rating
-	})
-
-	context.HTML(200, "scores.html", gin.H{
-		"BracketTitle": "Lower Bracket",
-		"BracketCharts": lo.Map(lowerBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
-			return models.ScorePageBracketChart{
-				Title:          chart.Chart.Song.Name,
-				TitleLatinized: chart.Chart.Song.NameLatinized,
-				ChartLevel:     "SP" + chart.Chart.Difficulty + strconv.Itoa(chart.Chart.Level),
-				ChartType:      chart.ChartType,
-			}
-		}),
-		"Bracket": lowerBracket,
-	})
-}
-
-func ScoresUpper(context *gin.Context) {
-
-	upperBracketCharts, err := GetBracketCharts("upper")
-	if err != nil {
-		log.Println("Error occurred while fetching upper bracket charts: ", err)
-	}
-
-	upperBracket := GetBracketScores(upperBracketCharts)
-
-	// ensure players with higher average rating are sorted for first
-	sort.SliceStable(upperBracket, func(i, j int) bool {
-		return upperBracket[i].Rating > upperBracket[j].Rating
-	})
-
-	context.HTML(200, "scores.html", gin.H{
-		"BracketTitle": "Upper Bracket",
-		"BracketCharts": lo.Map(upperBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
-			return models.ScorePageBracketChart{
-				Title:          chart.Chart.Song.Name,
-				TitleLatinized: chart.Chart.Song.NameLatinized,
-				ChartLevel:     "SP" + chart.Chart.Difficulty + strconv.Itoa(chart.Chart.Level),
-				ChartType:      chart.ChartType,
-			}
-		}),
-		"Bracket": upperBracket,
-	})
-}
-
-func ScoresMaster(context *gin.Context) {
-
-	masterBracketCharts, err := GetBracketCharts("master")
-	if err != nil {
-		log.Println("Error occurred while fetching master bracket charts: ", err)
-	}
-
-	masterBracket := GetBracketScores(masterBracketCharts)
-
-	// ensure players with higher average rating are sorted for first
-	sort.SliceStable(masterBracket, func(i, j int) bool {
-		return masterBracket[i].Rating > masterBracket[j].Rating
-	})
-
-	context.HTML(200, "scores.html", gin.H{
-		"BracketTitle": "Master Bracket",
-		"BracketCharts": lo.Map(masterBracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
-			return models.ScorePageBracketChart{
-				Title:          chart.Chart.Song.Name,
-				TitleLatinized: chart.Chart.Song.NameLatinized,
-				ChartLevel:     "SP" + chart.Chart.Difficulty + strconv.Itoa(chart.Chart.Level),
-				ChartType:      chart.ChartType,
-			}
-		}),
-		"Bracket": masterBracket,
-	})
-}
 
 func ScoresGeneric(context *gin.Context) {
 	startDate := context.Param("startDate")
@@ -121,7 +39,7 @@ func ScoresGeneric(context *gin.Context) {
 	})
 
 	context.HTML(200, "scores.html", gin.H{
-		"BracketTitle": fmt.Sprintf("%s Bracket", bracket),
+		"BracketTitle": fmt.Sprintf("%s Bracket", strings.ToTitle(bracket)),
 		"BracketCharts": lo.Map(bracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
 			return models.ScorePageBracketChart{
 				Title:          chart.Chart.Song.Name,

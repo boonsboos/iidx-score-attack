@@ -91,7 +91,7 @@
           <p>Bracket is active from {{ .StartTime }} until {{ .EndTime }}</p>
 
           <div>
-            <a href="/scores/lower">
+            <a href="/scores/{{ .StartTime }}/lower">
               <h3>Lower bracket</h3>
             </a>
             <table class="table table-striped table-hover">
@@ -111,7 +111,7 @@
           </div>
 
           <div>
-            <a href="/scores/upper">
+            <a href="/scores/{{ .StartTime }}/upper">
               <h3>Upper bracket</h3>
             </a>
             <table class="table table-striped table-hover">
@@ -131,7 +131,7 @@
           </div>
 
           <div>
-            <a href="/scores/master">
+            <a href="/scores/{{ .StartTime }}/master">
               <h3>Master bracket</h3>
             </a>
             <table class="table table-striped table-hover">

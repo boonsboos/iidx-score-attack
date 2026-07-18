@@ -114,6 +114,7 @@ func GetBracketsPaginated(limit int, offset int) []models.BracketListBracketType
 	brackets, err := gorm.G[models.BracketChart](DB).
 		Joins(clause.Has("Pool"), nil).
 		Group("Pool.title, bracket_type").
+		Having("Pool.active_from <= ?", time.Now()).
 		Order("Pool.active_from DESC").
 		Find(DefaultTimeout())
 	if err != nil {
