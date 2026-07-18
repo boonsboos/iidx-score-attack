@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"log"
+	"strings"
 	"text/template"
 
 	"github.com/gin-gonic/gin"
@@ -89,13 +90,7 @@ func RegisterRoutes(router *gin.Engine) {
 			}
 		},
 		"capitalize": func(s string) string {
-			if len(s) == 0 {
-				return s
-			}
-			if s[0] >= 'A' {
-				return s
-			}
-			return string(s[0]-32) + s[1:]
+			return strings.ToTitle(s)
 		},
 	})
 
