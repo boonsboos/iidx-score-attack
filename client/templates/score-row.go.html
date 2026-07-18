@@ -1,7 +1,11 @@
 {{ define "score-row" }}
 <tr>
   <td>
-    <div>{{ .Player.DJName }}</div>
+    <div>
+      {{ .Player.DJName }} {{ if eq .Player.Badge 1 }}
+      <abbr title="Badge: OG">📀</abbr>
+      {{end}}
+    </div>
     <div class="{{ danColor .Player.DanLevel }}">
       <abbr title="Dan Level: {{ danStringLatin .Player.DanLevel }}">
         {{ danString .Player.DanLevel }}

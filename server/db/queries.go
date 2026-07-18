@@ -2,6 +2,8 @@ package db
 
 import (
 	"fmt"
+	"log"
+	"sort"
 	"strconv"
 	"time"
 
@@ -15,6 +17,16 @@ func GetCurrentlyActiveChartPool() (models.ChartPool, error) {
 	return gorm.G[models.ChartPool](DB).
 		Where("active_from <= ? AND active_until >= ?", time.Now(), time.Now()).
 		First(DefaultTimeout())
+}
+
+func GetChartPool(startTime time.Time) (models.ChartPool, error) {
+	pool, err := gorm.G[models.ChartPool](DB).
+		Where("active_from = ?", startTime).
+		First(DefaultTimeout())
+	if err != nil {
+		return models.ChartPool{}, err
+	}
+	return pool, nil
 }
 
 func GetPoolCharts(pool models.ChartPool) ([]models.BracketChart, error) {
@@ -92,5 +104,67 @@ func mapToFrontendBracketChart(charts []models.BracketChart) []models.FrontendBr
 			VersionId:      chart.Chart.Song.Version.ID,
 			ChartType:      chart.ChartType,
 		}
+	})
+}
+
+func GetBracketsPaginated(limit int, offset int) []models.BracketListBracketTypes {
+	var brackets []models.BracketChart
+
+	// fetch the latest brackets for each bracket type
+	brackets, err := gorm.G[models.BracketChart](DB).
+		Joins(clause.Has("Pool"), nil).
+		Group("Pool.title, bracket_type").
+		Order("Pool.active_from DESC").
+		Find(DefaultTimeout())
+	if err != nil {
+		log.Println("Error fetching brackets: ", err)
+		return []models.BracketListBracketTypes{}
+	}
+
+	raw := lo.Map(brackets, func(bracket models.BracketChart, i int) models.BracketListBracket {
+		return models.BracketListBracket{
+			Title:       bracket.Pool.Title,
+			ActiveFrom:  bracket.Pool.ActiveFrom,
+			ActiveUntil: bracket.Pool.ActiveUntil,
+			BracketType: bracket.BracketType,
+		}
+	})
+
+	grouped := lo.GroupBy(raw, func(item models.BracketListBracket) string {
+		return item.Title
+	})
+
+	return lo.MapToSlice(grouped, func(title string, items []models.BracketListBracket) models.BracketListBracketTypes {
+		// merge the bracket types together
+		bracketTypes := lo.Map(items, func(item models.BracketListBracket, in int) string {
+			return item.BracketType
+		})
+
+		sortBracketTypes(bracketTypes)
+
+		return models.BracketListBracketTypes{
+			Title:        title,
+			ActiveFrom:   items[0].ActiveFrom,
+			ActiveUntil:  items[0].ActiveUntil,
+			BracketTypes: bracketTypes,
+		}
+	})
+}
+
+var order map[string]int = map[string]int{
+	"lower":    1,
+	"upper":    2,
+	"master":   3,
+	"beginner": 1,
+	"normal":   2,
+	"hyper":    3,
+	"another":  4,
+}
+
+// sort array in place in the correct order: lower, upper, master OR beginner, normal, hyper, another
+func sortBracketTypes(bracketTypes []string) {
+	sort.SliceStable(bracketTypes, func(i, j int) bool {
+
+		return order[bracketTypes[i]] < order[bracketTypes[j]]
 	})
 }

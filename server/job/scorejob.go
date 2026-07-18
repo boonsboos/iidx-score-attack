@@ -106,26 +106,27 @@ func prepareJob() ([]models.BracketChart, []models.Player, bool) {
 	return activeBracketCharts, players, true
 }
 
+// returns true if player is allowed to submit scores to the bracket chart, false otherwise
 func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
 
 	legacyBracketCheck := legacyCheck(player, matchingBracketChart, activeBracketCharts)
-	if !legacyBracketCheck {
+	if legacyBracketCheck == false {
 		return false
 	}
 
 	// 5th dan+ players are not allowed in beginner bracket (lv 3-5)
 	if player.DanLevel >= 11 && matchingBracketChart.BracketType == "beginner" {
-		genericBracketCheck("beginner", 11, player, matchingBracketChart, activeBracketCharts)
+		return genericBracketCheck("beginner", 11, player, matchingBracketChart, activeBracketCharts)
 	}
 
 	// 9th dan+ players are not allowed in normal bracket (lv 7-9)
 	if player.DanLevel >= 15 && matchingBracketChart.BracketType == "normal" {
-		genericBracketCheck("normal", 15, player, matchingBracketChart, activeBracketCharts)
+		return genericBracketCheck("normal", 15, player, matchingBracketChart, activeBracketCharts)
 	}
 
 	// kaiden players are not allowed in hyper bracket (lv 10-12)
 	if player.DanLevel == 18 && matchingBracketChart.BracketType == "hyper" {
-		genericBracketCheck("hyper", 18, player, matchingBracketChart, activeBracketCharts)
+		return genericBracketCheck("hyper", 18, player, matchingBracketChart, activeBracketCharts)
 	}
 
 	return true
@@ -137,11 +138,11 @@ func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketCha
 // unless they already have scores in the bracket (e.g. they were 8 dan when they submitted earlier scores, and then made it to 9 dan)
 func legacyCheck(player models.Player, matchingBracketChart models.BracketChart, activeBracketCharts []models.BracketChart) bool {
 	if player.DanLevel >= 12 && matchingBracketChart.BracketType == "lower" {
-		genericBracketCheck("lower", 12, player, matchingBracketChart, activeBracketCharts)
+		return genericBracketCheck("lower", 12, player, matchingBracketChart, activeBracketCharts)
 	}
 
 	if player.DanLevel >= 15 && matchingBracketChart.BracketType == "upper" {
-		genericBracketCheck("upper", 15, player, matchingBracketChart, activeBracketCharts)
+		return genericBracketCheck("upper", 15, player, matchingBracketChart, activeBracketCharts)
 	}
 	return true
 }

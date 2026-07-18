@@ -6,6 +6,7 @@ import (
 	"math"
 	"sort"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/samber/lo"
@@ -93,6 +94,44 @@ func ScoresMaster(context *gin.Context) {
 			}
 		}),
 		"Bracket": masterBracket,
+	})
+}
+
+func ScoresGeneric(context *gin.Context) {
+	startDate := context.Param("startDate")
+	bracket := context.Param("bracket")
+
+	startDateParsed, err := time.Parse("2006-01-02", startDate)
+	if err != nil {
+		log.Println("Error occurred while parsing start date: ", err)
+		context.String(400, "Bracket not found")
+		return
+	}
+
+	bracketCharts, err := GetHistoricalBracketCharts(bracket, startDateParsed)
+	if err != nil {
+		log.Println("Error occurred while fetching bracket charts: ", err)
+	}
+
+	bracketScores := GetBracketScores(bracketCharts)
+
+	// ensure players with higher average rating are sorted for first
+	sort.SliceStable(bracketScores, func(i, j int) bool {
+		return bracketScores[i].Rating > bracketScores[j].Rating
+	})
+
+	context.HTML(200, "scores.html", gin.H{
+		"BracketTitle": fmt.Sprintf("%s Bracket", bracket),
+		"BracketCharts": lo.Map(bracketCharts, func(chart models.BracketChart, i int) models.ScorePageBracketChart {
+			return models.ScorePageBracketChart{
+				Title:          chart.Chart.Song.Name,
+				TitleLatinized: chart.Chart.Song.NameLatinized,
+				ChartLevel:     "SP" + chart.Chart.Difficulty + strconv.Itoa(chart.Chart.Level),
+				ChartType:      chart.ChartType,
+			}
+		}),
+		"Bracket":   bracketScores,
+		"StartDate": startDate,
 	})
 }
 
@@ -270,6 +309,29 @@ func CalculatePerChartRating(charts []models.BracketChart, PlayerScores map[mode
 
 func GetBracketCharts(bracket string) ([]models.BracketChart, error) {
 	pool, err := db.GetCurrentlyActiveChartPool()
+	if err != nil {
+		log.Println("Error occurred while fetching currently active chart pool: ", err)
+
+		return []models.BracketChart{}, err
+	}
+
+	// extre method to include the song data
+	charts, err := db.GetPoolChartsScoresPage(pool)
+	if err != nil {
+		log.Println("Error occurred while fetching pool charts: ", err)
+
+		return []models.BracketChart{}, err
+	}
+
+	charts = lo.Filter(charts, func(chart models.BracketChart, i int) bool {
+		return chart.BracketType == bracket
+	})
+
+	return charts, nil
+}
+
+func GetHistoricalBracketCharts(bracket string, startDate time.Time) ([]models.BracketChart, error) {
+	pool, err := db.GetChartPool(startDate)
 	if err != nil {
 		log.Println("Error occurred while fetching currently active chart pool: ", err)
 

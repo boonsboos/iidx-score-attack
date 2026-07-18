@@ -188,6 +188,7 @@ type addBracketChartRequest struct {
 	Difficulty  string `json:"difficulty"`   // B, N, H, A or L
 	BracketType string `json:"bracket_type"` // "master" or "upper" or "lower"
 	ChartType   string `json:"chart_type"`   // "normal" or "boss"
+	PickedBy    string `json:"picker"`       // pooler name
 }
 
 func addChartToPool(context *gin.Context) {
@@ -231,6 +232,7 @@ func addChartToPool(context *gin.Context) {
 		ChartID:     chart.ID,
 		BracketType: request.BracketType,
 		ChartType:   request.ChartType,
+		PickedBy:    request.PickedBy,
 	})
 
 	context.JSON(200, gin.H{

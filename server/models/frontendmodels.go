@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type FrontendBracketChart struct {
 	Title          string `json:"title"`
 	TitleLatinized string `json:"title_lat"` // for use in tooltips since titles can be in japanese
@@ -35,4 +37,25 @@ type ScorePagePlayerScore struct {
 	Rating float64 `json:"rating"`
 	// assume that the scores are sorted by chart.
 	Scores []FrontendPlayerScore `json:"scores"`
+}
+
+type BracketListBracket struct {
+	Title       string    `json:"title"`
+	ActiveFrom  time.Time `json:"active_from"`
+	ActiveUntil time.Time `json:"active_to"`
+	BracketType string    `json:"bracket_type"`
+}
+
+type BracketListBracketTypes struct {
+	Title        string    `json:"title"`
+	ActiveFrom   time.Time `json:"active_from"`
+	ActiveUntil  time.Time `json:"active_to"`
+	BracketTypes []string  `json:"bracket_types"`
+}
+
+type FrontendBracketListBracket struct {
+	Title        string   `json:"title"`
+	ActiveFrom   string   `json:"active_from"`
+	ActiveUntil  string   `json:"active_to"`
+	BracketTypes []string `json:"bracket_types"`
 }

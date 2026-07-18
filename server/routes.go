@@ -21,9 +21,7 @@ func RegisterRoutes(router *gin.Engine) {
 	router.GET("/success", pages.Success)
 	router.GET("/scores", pages.BracketSelect)
 
-	router.GET("/scores/master", pages.ScoresMaster)
-	router.GET("/scores/upper", pages.ScoresUpper)
-	router.GET("/scores/lower", pages.ScoresLower)
+	router.GET("/scores/:startDate/:bracket", pages.ScoresGeneric)
 
 	router.GET("/scores/bracket/:id", pages.BracketSelect)
 	router.GET("/privacy-policy", pages.CookiePrivacy)
@@ -69,6 +67,35 @@ func RegisterRoutes(router *gin.Engine) {
 				return "dan-kaiden"
 			}
 			return ""
+		},
+		"bracketColor": func(bracketType string) string {
+			switch bracketType {
+			case "ANOTHER":
+				return "btn-danger"
+			case "master":
+				return "btn-danger"
+			case "HYPER":
+				return "btn-warning"
+			case "NORMAL":
+				return "btn-primary"
+			case "upper":
+				return "btn-primary"
+			case "BEGINNER":
+				return "btn-success"
+			case "lower":
+				return "btn-success"
+			default:
+				return ""
+			}
+		},
+		"capitalize": func(s string) string {
+			if len(s) == 0 {
+				return s
+			}
+			if s[0] >= 'A' {
+				return s
+			}
+			return string(s[0]-32) + s[1:]
 		},
 	})
 

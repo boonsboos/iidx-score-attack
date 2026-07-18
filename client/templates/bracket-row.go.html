@@ -1,0 +1,15 @@
+{{ define "bracket-row" }}
+
+<tr>
+  <td>{{ .Title }}</td>
+  <td>{{ .ActiveFrom }} - {{ .ActiveUntil }}</td>
+  <td>
+    {{ range .BracketTypes }}
+    <a class="btn {{ bracketColor . }}" href="/scores/{{ $.ActiveFrom}}/{{ . }}"
+      >{{ capitalize . }}</a
+    >
+    {{ end }}
+  </td>
+</tr>
+
+{{ end }}

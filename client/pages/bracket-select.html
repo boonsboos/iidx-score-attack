@@ -33,16 +33,22 @@
       <div>
         <h2>Bracket Select</h2>
         <p>Choose a bracket to view the scores.</p>
-
-        <a class="btn btn-success" href="/scores/lower">Lower bracket</a>
-        <a class="btn btn-primary" href="/scores/upper">Upper bracket</a>
-        <a class="btn btn-danger" href="/scores/master">Master bracket</a>
       </div>
 
-      <p>
-        Someday this will be a list of old brackets so you can view their
-        scores...
-      </p>
+      <div>
+        <table class="table table-striped table-hover sortable">
+          <thead>
+            <tr>
+              <th scope="col" class="col-3">Bracket</th>
+              <th scope="col" class="col-3">Date</th>
+              <th scope="col" class="col-6">Scores</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .Brackets }} {{ template "bracket-row" . }} {{ end }}
+          </tbody>
+        </table>
+      </div>
     </div>
 
     {{ template "footer" }}
@@ -52,5 +58,7 @@
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
+
+    <script src="https://cdn.jsdelivr.net/gh/tofsjonas/sortable@4.1.7/dist/sortable.min.js"></script>
   </body>
 </html>
