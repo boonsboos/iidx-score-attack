@@ -13,9 +13,10 @@ import (
 )
 
 func Index(context *gin.Context) {
-	masterBracketCharts := make([]models.FrontendBracketChart, 0)
-	upperBracketCharts := make([]models.FrontendBracketChart, 0)
-	lowerBracketCharts := make([]models.FrontendBracketChart, 0)
+	beginnerBracketCharts := make([]models.FrontendBracketChart, 0)
+	normalBracketCharts := make([]models.FrontendBracketChart, 0)
+	hyperBracketCharts := make([]models.FrontendBracketChart, 0)
+	anotherBracketCharts := make([]models.FrontendBracketChart, 0)
 
 	activeChartPool, err := db.GetCurrentlyActiveChartPool()
 	if err != nil {
@@ -25,13 +26,14 @@ func Index(context *gin.Context) {
 			log.Println("Error fetching active chart pool:", err)
 		}
 	} else {
-		master, upper, lower, err := db.GetPoolChartsFrontend(activeChartPool)
+		beginner, normal, hyper, another, err := db.GetPoolChartsFrontend(activeChartPool)
 		if err != nil {
 			log.Println("Error fetching active charts for frontend:", err)
 		} else {
-			masterBracketCharts = master
-			upperBracketCharts = upper
-			lowerBracketCharts = lower
+			beginnerBracketCharts = beginner
+			normalBracketCharts = normal
+			hyperBracketCharts = hyper
+			anotherBracketCharts = another
 		}
 	}
 
@@ -42,12 +44,13 @@ func Index(context *gin.Context) {
 		"KAuthURI":     config.ServerConfig.GetApiConfigByName("K").AuthBaseUrl,
 		"KClientId":    config.ServerConfig.GetApiConfigByName("K").ClientId,
 
-		"BracketActive":       activeChartPool.ID != 0,
-		"PoolName":            activeChartPool.Title,
-		"StartTime":           activeChartPool.ActiveFrom.Format("2006-01-02"),  // for the bracket countdown timer
-		"EndTime":             activeChartPool.ActiveUntil.Format("2006-01-02"), // for the bracket countdown timer
-		"MasterBracketCharts": masterBracketCharts,
-		"UpperBracketCharts":  upperBracketCharts,
-		"LowerBracketCharts":  lowerBracketCharts,
+		"BracketActive":         activeChartPool.ID != 0,
+		"PoolName":              activeChartPool.Title,
+		"StartTime":             activeChartPool.ActiveFrom.Format("2006-01-02"),  // for the bracket countdown timer
+		"EndTime":               activeChartPool.ActiveUntil.Format("2006-01-02"), // for the bracket countdown timer
+		"BeginnerBracketCharts": beginnerBracketCharts,
+		"NormalBracketCharts":   normalBracketCharts,
+		"HyperBracketCharts":    hyperBracketCharts,
+		"AnotherBracketCharts":  anotherBracketCharts,
 	})
 }

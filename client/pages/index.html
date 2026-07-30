@@ -88,11 +88,11 @@
         {{ if .BracketActive }}
           <h2> {{ .PoolName }} charts</h2>
 
-          <p>Bracket is active from {{ .StartTime }} until {{ .EndTime }}</p>
+          <p>This chart pool is active from {{ .StartTime }} until {{ .EndTime }}</p>
 
           <div>
-            <a href="/scores/{{ .StartTime }}/lower">
-              <h3>Lower bracket</h3>
+            <a href="/scores/{{ .StartTime }}/beginner">
+              <h3>BEGINNER bracket</h3>
             </a>
             <table class="table table-striped table-hover">
               <thead>
@@ -104,15 +104,15 @@
                 </tr>
               </thead>
               <tbody>
-                {{ range .LowerBracketCharts }} {{ template "chart-row" . }} {{
+                {{ range .BeginnerBracketCharts }} {{ template "chart-row" . }} {{
                 end }}
               </tbody>
             </table>
           </div>
 
           <div>
-            <a href="/scores/{{ .StartTime }}/upper">
-              <h3>Upper bracket</h3>
+            <a href="/scores/{{ .StartTime }}/normal">
+              <h3>NORMAL bracket</h3>
             </a>
             <table class="table table-striped table-hover">
               <thead>
@@ -124,15 +124,15 @@
                 </tr>
               </thead>
               <tbody>
-                {{ range .UpperBracketCharts }} {{ template "chart-row" . }} {{
+                {{ range .NormalBracketCharts }} {{ template "chart-row" . }} {{
                 end }}
               </tbody>
             </table>
           </div>
 
           <div>
-            <a href="/scores/{{ .StartTime }}/master">
-              <h3>Master bracket</h3>
+            <a href="/scores/{{ .StartTime }}/hyper">
+              <h3>HYPER bracket</h3>
             </a>
             <table class="table table-striped table-hover">
               <thead>
@@ -144,7 +144,27 @@
                 </tr>
               </thead>
               <tbody>
-                {{ range .MasterBracketCharts }} {{ template "chart-row" . }} {{
+                {{ range .HyperBracketCharts }} {{ template "chart-row" . }} {{
+                end }}
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <a href="/scores/{{ .StartTime }}/another">
+              <h3>ANOTHER bracket</h3>
+            </a>
+            <table class="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th class="col-4">Title</th>
+                  <th class="col-5">Artist</th>
+                  <th class="col-1">Chart</th>
+                  <th class="col-2">Version</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ range .AnotherBracketCharts }} {{ template "chart-row" . }} {{
                 end }}
               </tbody>
             </table>

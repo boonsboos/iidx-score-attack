@@ -62,7 +62,7 @@ func GetCurrentlyActiveChartPoolStartTime() (time.Time, time.Time, error) {
 	return activePool.ActiveFrom, activePool.ActiveUntil, nil
 }
 
-func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart, []models.FrontendBracketChart, []models.FrontendBracketChart, error) {
+func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart, []models.FrontendBracketChart, []models.FrontendBracketChart, []models.FrontendBracketChart, error) {
 	var allCharts []models.BracketChart
 
 	err := DB.Model(&models.BracketChart{}).
@@ -73,18 +73,20 @@ func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart
 		Order("bracket_charts.chart_type DESC, Chart__Song__name ASC").
 		Scan(&allCharts).Error
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf("error occurred while fetching pool charts: %w", err)
+		return nil, nil, nil, nil, fmt.Errorf("error occurred while fetching pool charts: %w", err)
 	}
 
-	masterCharts := filterByBracketType(allCharts, "master")
-	upperCharts := filterByBracketType(allCharts, "upper")
-	lowerCharts := filterByBracketType(allCharts, "lower")
+	beginnerCharts := filterByBracketType(allCharts, "beginner")
+	normalCharts := filterByBracketType(allCharts, "normal")
+	hyperCharts := filterByBracketType(allCharts, "hyper")
+	anotherCharts := filterByBracketType(allCharts, "another")
 
-	masterFrontendCharts := mapToFrontendBracketChart(masterCharts)
-	upperFrontendCharts := mapToFrontendBracketChart(upperCharts)
-	lowerFrontendCharts := mapToFrontendBracketChart(lowerCharts)
+	beginnerFrontendCharts := mapToFrontendBracketChart(beginnerCharts)
+	normalFrontendCharts := mapToFrontendBracketChart(normalCharts)
+	hyperFrontendCharts := mapToFrontendBracketChart(hyperCharts)
+	anotherFrontendCharts := mapToFrontendBracketChart(anotherCharts)
 
-	return masterFrontendCharts, upperFrontendCharts, lowerFrontendCharts, nil
+	return beginnerFrontendCharts, normalFrontendCharts, hyperFrontendCharts, anotherFrontendCharts, nil
 }
 
 func filterByBracketType(charts []models.BracketChart, bracketType string) []models.BracketChart {
