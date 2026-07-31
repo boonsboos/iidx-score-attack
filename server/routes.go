@@ -5,6 +5,7 @@ import (
 	"log"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"iidx.boonsboos.nl/server/models"
@@ -94,6 +95,9 @@ func RegisterRoutes(router *gin.Engine) {
 		},
 		"join": func(arr []string, sep string) string {
 			return strings.Join(arr, sep)
+		},
+		"unix": func(t time.Time) int64 {
+			return t.Unix()
 		},
 	})
 
