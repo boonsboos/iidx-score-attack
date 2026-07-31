@@ -8,7 +8,6 @@ import (
 	"iidx.boonsboos.nl/server"
 	"iidx.boonsboos.nl/server/config"
 	"iidx.boonsboos.nl/server/db"
-	"iidx.boonsboos.nl/server/job"
 )
 
 func main() {
@@ -18,7 +17,7 @@ func main() {
 	config.InitConfig()
 	db.InitDB()
 
-	go job.StartWorker()
+	//go job.StartWorker()
 
 	InitServer()
 }

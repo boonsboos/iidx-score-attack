@@ -13,10 +13,10 @@ import (
 )
 
 func Index(context *gin.Context) {
-	beginnerBracketCharts := make([]models.FrontendBracketChart, 0)
-	normalBracketCharts := make([]models.FrontendBracketChart, 0)
-	hyperBracketCharts := make([]models.FrontendBracketChart, 0)
-	anotherBracketCharts := make([]models.FrontendBracketChart, 0)
+	var beginnerBracketCharts models.FrontendBracket
+	var normalBracketCharts models.FrontendBracket
+	var hyperBracketCharts models.FrontendBracket
+	var anotherBracketCharts models.FrontendBracket
 
 	activeChartPool, err := db.GetCurrentlyActiveChartPool()
 	if err != nil {
@@ -26,14 +26,14 @@ func Index(context *gin.Context) {
 			log.Println("Error fetching active chart pool:", err)
 		}
 	} else {
-		beginner, normal, hyper, another, err := db.GetPoolChartsFrontend(activeChartPool)
+		charts, err := db.GetPoolChartsFrontend(activeChartPool)
 		if err != nil {
 			log.Println("Error fetching active charts for frontend:", err)
 		} else {
-			beginnerBracketCharts = beginner
-			normalBracketCharts = normal
-			hyperBracketCharts = hyper
-			anotherBracketCharts = another
+			beginnerBracketCharts = charts["beginner"]
+			normalBracketCharts = charts["normal"]
+			hyperBracketCharts = charts["hyper"]
+			anotherBracketCharts = charts["another"]
 		}
 	}
 

@@ -12,6 +12,11 @@ type FrontendBracketChart struct {
 	ChartType      string `json:"chart_type"` // "normal" or "boss"
 }
 
+type FrontendBracket struct {
+	Pickers []string `json:"pickers"`
+	Charts  []FrontendBracketChart
+}
+
 type FrontendPlayerScore struct {
 	ChartId uint `json:"chart_id"`
 	// if 0, unplayed, don't show other data

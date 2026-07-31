@@ -92,6 +92,9 @@ func RegisterRoutes(router *gin.Engine) {
 		"capitalize": func(s string) string {
 			return strings.ToTitle(s)
 		},
+		"join": func(arr []string, sep string) string {
+			return strings.Join(arr, sep)
+		},
 	})
 
 	log.Println("Registering custom functions OK")

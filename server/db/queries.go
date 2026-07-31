@@ -62,7 +62,7 @@ func GetCurrentlyActiveChartPoolStartTime() (time.Time, time.Time, error) {
 	return activePool.ActiveFrom, activePool.ActiveUntil, nil
 }
 
-func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart, []models.FrontendBracketChart, []models.FrontendBracketChart, []models.FrontendBracketChart, error) {
+func GetPoolChartsFrontend(pool models.ChartPool) (map[string]models.FrontendBracket, error) {
 	var allCharts []models.BracketChart
 
 	err := DB.Model(&models.BracketChart{}).
@@ -73,7 +73,7 @@ func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart
 		Order("bracket_charts.chart_type DESC, Chart__Song__name ASC").
 		Scan(&allCharts).Error
 	if err != nil {
-		return nil, nil, nil, nil, fmt.Errorf("error occurred while fetching pool charts: %w", err)
+		return nil, fmt.Errorf("error occurred while fetching pool charts: %w", err)
 	}
 
 	beginnerCharts := filterByBracketType(allCharts, "beginner")
@@ -86,7 +86,12 @@ func GetPoolChartsFrontend(pool models.ChartPool) ([]models.FrontendBracketChart
 	hyperFrontendCharts := mapToFrontendBracketChart(hyperCharts)
 	anotherFrontendCharts := mapToFrontendBracketChart(anotherCharts)
 
-	return beginnerFrontendCharts, normalFrontendCharts, hyperFrontendCharts, anotherFrontendCharts, nil
+	return map[string]models.FrontendBracket{
+		"beginner": {Pickers: getBracketPickers(beginnerCharts), Charts: beginnerFrontendCharts},
+		"normal":   {Pickers: getBracketPickers(normalCharts), Charts: normalFrontendCharts},
+		"hyper":    {Pickers: getBracketPickers(hyperCharts), Charts: hyperFrontendCharts},
+		"another":  {Pickers: getBracketPickers(anotherCharts), Charts: anotherFrontendCharts},
+	}, nil
 }
 
 func filterByBracketType(charts []models.BracketChart, bracketType string) []models.BracketChart {
@@ -106,6 +111,12 @@ func mapToFrontendBracketChart(charts []models.BracketChart) []models.FrontendBr
 			VersionId:      chart.Chart.Song.Version.ID,
 			ChartType:      chart.ChartType,
 		}
+	})
+}
+
+func getBracketPickers(bracket []models.BracketChart) []string {
+	return lo.UniqMap(bracket, func(item models.BracketChart, i int) string {
+		return item.PickedBy
 	})
 }
 
