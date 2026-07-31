@@ -114,9 +114,9 @@ func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketCha
 		return false
 	}
 
-	// 5th dan+ players are not allowed in beginner bracket (lv 3-5)
+	// 4th dan+ players are not allowed in beginner bracket (lv 3-5)
 	if player.DanLevel >= 11 && matchingBracketChart.BracketType == "beginner" {
-		return genericBracketCheck("beginner", 11, player, matchingBracketChart, activeBracketCharts)
+		return genericBracketCheck("beginner", 10, player, matchingBracketChart, activeBracketCharts)
 	}
 
 	// 9th dan+ players are not allowed in normal bracket (lv 7-9)
