@@ -96,7 +96,8 @@ func RegisterRoutes(router *gin.Engine) {
 		"join": func(arr []string, sep string) string {
 			return strings.Join(arr, sep)
 		},
-		"unix": func(t time.Time) int64 {
+		"unix": func(s string) int64 {
+			t, _ := time.Parse("2006-01-02", s)
 			return t.Unix()
 		},
 	})
