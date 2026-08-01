@@ -74,15 +74,23 @@ func RegisterRoutes(router *gin.Engine) {
 			switch bracketType {
 			case "ANOTHER":
 				return "btn-danger"
+			case "another":
+				return "btn-danger"
 			case "master":
 				return "btn-danger"
+			case "hyper":
+				return "btn-warning"
 			case "HYPER":
 				return "btn-warning"
 			case "NORMAL":
 				return "btn-primary"
+			case "normal":
+				return "btn-primary"
 			case "upper":
 				return "btn-primary"
 			case "BEGINNER":
+				return "btn-success"
+			case "beginner":
 				return "btn-success"
 			case "lower":
 				return "btn-success"
