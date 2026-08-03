@@ -341,4 +341,6 @@ func assignBadgeToPlayer(context *gin.Context) {
 		"player":  player.DJName,
 		"badges":  player.Badge,
 	})
+
+	db.DB.Save(&player)
 }
