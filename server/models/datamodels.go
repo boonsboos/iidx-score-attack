@@ -13,7 +13,7 @@ type Player struct {
 	DanLevel     int            `json:"dan_level"`                                     // 7k = 0, 1d = 7, ... 10d = 16, chuuden = 17, kaiden = 18
 	RefreshToken sql.NullString `json:"refresh_token" gorm:"index,size:1024"`          // can only be nil or "" if the user revoked access to us and we already tried to make a refresh request that failed.
 	Server       string         `json:"server" gorm:"index:idx_game_id_server,unique"` // "F" or "K"
-	Badge        int8           `json:"badge"`                                         // 0 = no badge, 1 = tester
+	Badge        string         `json:"badge"`                                         // string of 0s and 1s, to have an arbitrary number of badges.
 }
 
 // the pool of charts that are currently active for a score attack event

@@ -1,0 +1,7 @@
+{{ define "badge-collection" }}
+    {{ range $index, $badge := . }}
+        {{ if eq $badge "1" }}
+            <abbr title="{{ badge $index }}">{{ badgeIcon $index }}</abbr>
+        {{ end }}
+    {{ end }}
+{{ end }}

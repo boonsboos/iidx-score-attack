@@ -2,9 +2,8 @@
 <tr>
   <td>
     <div>
-      {{ .Player.DJName }} {{ if eq .Player.Badge 1 }}
-      <abbr title="Badge: OG">📀</abbr>
-      {{end}}
+      {{ .Player.DJName }} {{ template "badge-collection" ( badgeCollection
+      .Player.Badge ) }}
     </div>
     <div class="{{ danColor .Player.DanLevel }}">
       <abbr title="Dan Level: {{ danStringLatin .Player.DanLevel }}">

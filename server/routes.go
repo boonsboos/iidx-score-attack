@@ -108,6 +108,19 @@ func RegisterRoutes(router *gin.Engine) {
 			t, _ := time.Parse("2006-01-02", s)
 			return t.Unix()
 		},
+		"badge": func(badgeIndex int) string {
+			return models.Badges[badgeIndex]
+		},
+		"badgeIcon": func(badgeIndex int) string {
+			return models.BadgeIcons[badgeIndex]
+		},
+		"badgeCollection": func(badgeString string) []string {
+			badges := make([]string, 0, len(badgeString))
+			for i := 0; i < len(badgeString); i++ {
+				badges = append(badges, badgeString[i:i+1])
+			}
+			return badges
+		},
 	})
 
 	log.Println("Registering custom functions OK")

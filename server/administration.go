@@ -25,6 +25,8 @@ func RegisterMaintenanceRoutes(router *gin.Engine) {
 
 	router.POST("/maintenance/charts/maxscore", updateChartMaxScores)
 	// TODO: add route to reset user auth
+
+	router.POST("/maintenance/player/:id/badge", assignBadgeToPlayer)
 }
 
 // adminHeader is used to validate that the request is coming from an admin
@@ -286,5 +288,57 @@ func updateChartMaxScores(context *gin.Context) {
 
 	context.JSON(200, gin.H{
 		"message": fmt.Sprintf("Successfully updated max scores for %d charts", totalUpdatedCharts),
+	})
+}
+
+func assignBadgeToPlayer(context *gin.Context) {
+	if !checkAdminKey(context) {
+		return
+	}
+
+	var playerPath struct {
+		Id uint `uri:"id" binding:"required"`
+	}
+	err := context.ShouldBindUri(&playerPath)
+	if err != nil {
+		context.JSON(400, gin.H{"error": "not a valid player id"})
+		return
+	}
+
+	var badgeRequest struct {
+		BadgeIndex int `json:"badge_index"`
+	}
+	err = context.ShouldBindJSON(&badgeRequest)
+	if err != nil {
+		context.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+
+	if badgeRequest.BadgeIndex < 0 || badgeRequest.BadgeIndex >= len(models.Badges) {
+		context.JSON(400, gin.H{"error": "not a badge"})
+		return
+	}
+
+	player, err := gorm.G[models.Player](db.DB).
+		Where("id = ?", playerPath.Id).
+		First(db.DefaultTimeout())
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			context.JSON(400, gin.H{"error": "Player not found"})
+			return
+		}
+
+		context.JSON(500, gin.H{"error": "Error occurred while fetching player"})
+		log.Println("Error occurred while fetching player: ", err)
+		return
+	}
+
+	player.AssignBadge(badgeRequest.BadgeIndex)
+
+	context.JSON(200, gin.H{
+		"message": "added badge " + models.Badges[badgeRequest.BadgeIndex],
+		"player":  player.DJName,
+		"badges":  player.Badge,
 	})
 }
