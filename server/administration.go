@@ -56,12 +56,12 @@ type difficultySpread struct {
 func checkAdminKey(context *gin.Context) bool {
 	var header adminHeader
 	if err := context.ShouldBindHeader(&header); err != nil {
-		context.Status(400)
+		context.Status(404)
 		return false
 	}
 
 	if header.AdminKey != config.ServerConfig.AdminKey {
-		context.Status(400)
+		context.Status(404)
 		return false
 	}
 	return true
