@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"sort"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,10 @@ func BracketSelect(context *gin.Context) {
 			ActiveUntil:  bracket.ActiveUntil.Format("2006-01-02"),
 			BracketTypes: bracket.BracketTypes,
 		}
+	})
+
+	sort.SliceStable(brackets, func(i, j int) bool {
+		return brackets[i].ActiveFrom > brackets[j].ActiveFrom
 	})
 
 	context.HTML(200, "bracket-select.html", gin.H{
