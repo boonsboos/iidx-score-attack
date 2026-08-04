@@ -178,7 +178,6 @@ var order map[string]int = map[string]int{
 // sort array in place in the correct order: lower, upper, master OR beginner, normal, hyper, another
 func sortBracketTypes(bracketTypes []string) {
 	sort.SliceStable(bracketTypes, func(i, j int) bool {
-
 		return order[bracketTypes[i]] < order[bracketTypes[j]]
 	})
 }

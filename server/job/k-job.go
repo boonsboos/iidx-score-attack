@@ -134,7 +134,7 @@ func analyzeKScore(activeBracketCharts []models.BracketChart, score models.KChar
 			existingScore.Misscount = score.BP
 		}
 
-		gorm.G[models.Score](db.DB).
+		rowsAffected, _ := gorm.G[models.Score](db.DB).
 			Where("player_id = ? AND bracket_chart_id = ?", player.ID, matchingBracketChart.ID).
 			Updates(db.DefaultTimeout(), models.Score{
 				// verify if the ex score is higher than the existing score's ex score, if so, update it as well
@@ -145,7 +145,7 @@ func analyzeKScore(activeBracketCharts []models.BracketChart, score models.KChar
 				Timestamp: score.Timestamp,
 			})
 
-		return 1
+		return rowsAffected
 	}
 	return 0
 }

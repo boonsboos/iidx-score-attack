@@ -200,7 +200,7 @@ func analyzeFScore(activeBracketCharts []models.BracketChart, score models.FScor
 			existingScore.Misscount = score.MissCount
 		}
 
-		gorm.G[models.Score](db.DB).
+		rowsAffected, _ := gorm.G[models.Score](db.DB).
 			Where("player_id = ? AND bracket_chart_id = ?", player.ID, matchingBracketChart.ID).
 			Updates(db.DefaultTimeout(), models.Score{
 				// verify if the ex score is higher than the existing score's ex score, if so, update it as well
@@ -211,7 +211,7 @@ func analyzeFScore(activeBracketCharts []models.BracketChart, score models.FScor
 				Timestamp: score.Timestamp,
 			})
 
-		return 1
+		return rowsAffected
 	}
 	return 0
 }
