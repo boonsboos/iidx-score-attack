@@ -3,13 +3,15 @@ package models
 var Badges = map[int]string{
 	0: "OG",
 	1: "August 2026 Hidden Theme",
-	2: "TBD",
+	2: "September 2026 Hidden Theme",
+	3: "TBD",
 }
 
 var BadgeIcons = map[int]string{
-	0: `📀`,
+	0: `✨`,
 	1: `🪙`,
-	2: `❓`,
+	2: `💽`,
+	3: `❓`,
 }
 
 func (player *Player) AssignBadge(badgeIndex int) {
