@@ -15,3 +15,9 @@ type UnauthorizedError struct{}
 func (e *UnauthorizedError) Error() string {
 	return "Unauthorized"
 }
+
+type FServerError struct{}
+
+func (e *FServerError) Error() string {
+	return "F server side error"
+}

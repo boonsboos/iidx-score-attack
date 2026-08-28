@@ -3,6 +3,7 @@ package thirdparty
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"io"
 	"log"
 	"net/http"
@@ -21,8 +22,11 @@ func RefreshFAuth(player models.Player) (string, error) {
 	if err != nil {
 		log.Println("Error occurred while refreshing auth: ", err)
 
-		player.RefreshToken = sql.NullString{Valid: false}
-		db.DB.Save(&player)
+		// if the server is down, we shouldn't do anything
+		if (!errors.Is(err, &FServerError{})) {
+			player.RefreshToken = sql.NullString{Valid: false}
+			db.DB.Save(&player)
+		}
 
 		return "", err
 	} else {
@@ -53,6 +57,13 @@ func refreshFToken(refreshToken string) (fTokenData, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode != 200 {
+
+		if response.StatusCode >= 500 {
+			responseBody, _ := io.ReadAll(response.Body)
+			log.Println("F server side issue, refresh cannot be performed.", string(responseBody))
+			return fTokenData{}, &FServerError{}
+		}
+
 		log.Println("Error occurred while refreshing token => Status Code: ", response.StatusCode)
 		return fTokenData{}, &UnauthorizedError{}
 	}
