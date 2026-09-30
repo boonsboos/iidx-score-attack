@@ -4,14 +4,16 @@ var Badges = map[int]string{
 	0: "OG",
 	1: "August 2026 Hidden Theme",
 	2: "September 2026 Hidden Theme",
-	3: "TBD",
+	3: "October 2026 Hidden Theme",
+	4: "TBD",
 }
 
 var BadgeIcons = map[int]string{
 	0: `✨`,
 	1: `🪙`,
 	2: `💽`,
-	3: `❓`,
+	3: `🍂`,
+	4: `❓`,
 }
 
 func (player *Player) AssignBadge(badgeIndex int) {
