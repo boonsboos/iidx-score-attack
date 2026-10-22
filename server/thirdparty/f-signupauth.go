@@ -58,7 +58,11 @@ func HandleFOauthCallback(context *gin.Context) {
 	}
 
 	db.DB.Clauses(clause.OnConflict{
-		UpdateAll: true,
+		DoUpdates: clause.AssignmentColumns([]string{
+			"dj_name",
+			"dan_level",
+			"refresh_token",
+		}),
 	}).Create(&player)
 
 	context.Redirect(302, "/success?dj_name="+iidxProfile.DJName)
