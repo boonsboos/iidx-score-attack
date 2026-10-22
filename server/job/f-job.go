@@ -5,6 +5,7 @@ import (
 	"log"
 	"math"
 	"sort"
+	"time"
 
 	"github.com/samber/lo"
 	"gorm.io/gorm"
@@ -27,6 +28,12 @@ func fPlayerJob(player models.Player, activeBracketCharts []models.BracketChart)
 				return
 			}
 			profile = retriedProfile
+		} else if errors.Is(err, &thirdparty.RateLimitError{}) {
+			log.Println("Error occurred while fetching profile, rate limit exceeded for", player.Server, "player", player.GameID, "due to:", err)
+			for i := 0; i < 5 && err != nil; i++ {
+				time.Sleep(time.Duration(err.(*thirdparty.RateLimitError).RetryAfter+1) * time.Second)
+				profile, err = thirdparty.FGetIIDXProfile(playerTokens[player.ID])
+			}
 		} else {
 			// TODO: send out an alert to a separate channel where maintainer can see it
 			log.Println("Error occurred while fetching profile for", player.Server, "player", player.GameID, ":", err)

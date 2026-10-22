@@ -42,22 +42,22 @@ func workerJob() {
 		waitgroup := sync.WaitGroup{}
 
 		for _, player := range players {
-			// waitgroup spawns the task in a goroutine
-			waitgroup.Go(func() {
-				log.Println("Performing job for", player.Server, "player", player.GameID)
 
-				switch player.Server {
-				case "F":
-					fPlayerJob(player, activeBracketCharts)
-				case "K":
+			// K does not have a rate limit, so we can spawn a goroutine for each player
+			// F has a rate limit, so we need to process them sequentially.
+			if player.Server == "K" {
+				// waitgroup spawns the task in a goroutine
+				waitgroup.Go(func() {
+					log.Println("Performing job for", player.Server, "player", player.GameID)
+
 					kPlayerJob(player, activeBracketCharts)
-				default:
-					log.Println("Player with empty server!!!!", player.GameID, "Defaulting to F since it was added first.")
-					fPlayerJob(player, activeBracketCharts)
-				}
 
+					log.Println("Finished job for", player.Server, "player", player.GameID)
+				})
+			} else {
+				fPlayerJob(player, activeBracketCharts)
 				log.Println("Finished job for", player.Server, "player", player.GameID)
-			})
+			}
 		}
 
 		// wait for all tasks

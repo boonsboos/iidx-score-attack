@@ -1,8 +1,6 @@
 package thirdparty
 
-// TODO:
-// implement custom error types
-// this way we can differentiate between errors that are caused by the user (e.g. invalid refresh token)
+import "strconv"
 
 type RefreshTokenError struct{}
 
@@ -20,4 +18,12 @@ type FServerError struct{}
 
 func (e *FServerError) Error() string {
 	return "F server side error"
+}
+
+type RateLimitError struct {
+	RetryAfter int
+}
+
+func (e *RateLimitError) Error() string {
+	return "Rate limit exceeded, retry after: " + strconv.Itoa(e.RetryAfter) + " seconds"
 }

@@ -8,7 +8,9 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
+	"time"
 
 	"iidx.boonsboos.nl/server/config"
 	"iidx.boonsboos.nl/server/db"
@@ -21,6 +23,12 @@ func RefreshFAuth(player models.Player) (string, error) {
 	tokenData, err := refreshFToken(player.RefreshToken.String)
 	if err != nil {
 		log.Println("Error occurred while refreshing auth: ", err)
+
+		if (errors.Is(err, &RateLimitError{})) {
+			log.Println("Rate limit exceeded while refreshing auth for player", player.GameID)
+			time.Sleep(time.Duration(err.(*RateLimitError).RetryAfter+1) * time.Second)
+			return RefreshFAuth(player)
+		}
 
 		// if the server is down, we shouldn't do anything
 		if (!errors.Is(err, &FServerError{})) {
@@ -62,6 +70,13 @@ func refreshFToken(refreshToken string) (fTokenData, error) {
 			responseBody, _ := io.ReadAll(response.Body)
 			log.Println("F server side issue, refresh cannot be performed.", string(responseBody))
 			return fTokenData{}, &FServerError{}
+		}
+
+		if response.StatusCode == 429 {
+			retryAfter := response.Header.Get("Retry-After")
+			log.Println("Rate limit exceeded while refreshing token, retry after: ", retryAfter)
+			retryAfterInt, _ := strconv.Atoi(retryAfter)
+			return fTokenData{}, &RateLimitError{RetryAfter: retryAfterInt}
 		}
 
 		log.Println("Error occurred while refreshing token => Status Code: ", response.StatusCode)
