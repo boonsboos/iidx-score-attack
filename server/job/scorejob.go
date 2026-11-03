@@ -124,9 +124,9 @@ func checkPlayerPlayingInCorrectBracket(player models.Player, matchingBracketCha
 		return genericBracketCheck("normal", 15, player, matchingBracketChart, activeBracketCharts)
 	}
 
-	// 9th dan+ players are not allowed in hyper bracket (lv 10-11)
-	if player.DanLevel >= 15 && matchingBracketChart.BracketType == "hyper" {
-		return genericBracketCheck("hyper", 18, player, matchingBracketChart, activeBracketCharts)
+	// 10th dan+ players are not allowed in hyper bracket (lv 10-11)
+	if player.DanLevel >= 16 && matchingBracketChart.BracketType == "hyper" {
+		return genericBracketCheck("hyper", 16, player, matchingBracketChart, activeBracketCharts)
 	}
 
 	return true
